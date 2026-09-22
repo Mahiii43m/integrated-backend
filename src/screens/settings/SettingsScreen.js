@@ -116,7 +116,11 @@ export default function SettingsScreen({ navigation }) {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Chats')}
+          style={styles.backButton}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: textColor }]}>Settings</Text>

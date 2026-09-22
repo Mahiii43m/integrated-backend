@@ -82,7 +82,11 @@ export default function NotificationsScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
           <Icon name="chevron-back-outline" size={26} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>

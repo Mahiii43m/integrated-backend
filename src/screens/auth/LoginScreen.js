@@ -14,7 +14,8 @@ import {
   ScrollView,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { LogoSVG, AntennaTip } from '../../components/Branding';
+import AntennaTip from '../../assets/images/antenna-tip.svg';
+import LogoSVG from '../../assets/images/logo.svg';
 import { useAuth } from '../../firebase/context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +30,9 @@ export default function LoginScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const pulseAnim = useRef(new Animated.Value(0.6)).current;
+
+  // Tracks the last-known password so we can detect paste (large length jumps)
+  const prevPasswordRef = useRef('');
 
   useEffect(() => {
     Animated.parallel([
@@ -59,6 +63,21 @@ export default function LoginScreen({ navigation }) {
       ])
     ).start();
   }, []);
+
+  const handlePasswordChange = (text) => {
+    const prevLength = prevPasswordRef.current.length;
+    const newLength = text.length;
+    const isLikelyPaste = newLength - prevLength > 1;
+
+    if (isLikelyPaste) {
+      // Reject the paste — keep the field at its previous value
+      return;
+    }
+
+    prevPasswordRef.current = text;
+    setError('');
+    setPassword(text);
+  };
 
   const handleLogin = async () => {
     // ── Email validation ──────────────────────────
@@ -188,12 +207,10 @@ export default function LoginScreen({ navigation }) {
                   placeholderTextColor="rgba(0,0,0,0.35)"
                   secureTextEntry={!showPassword}
                   value={password}
-                  onChangeText={(text) => {
-                    setError('');
-                    setPassword(text);
-                  }}
+                  onChangeText={handlePasswordChange}
                   editable={!loading}
                   selectionColor="#DD984B"
+                  contextMenuHidden={true}
                 />
                 <TouchableOpacity
                   style={styles.eyeButton}

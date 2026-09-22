@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { storage } from '../storage';
+import { initPresence } from '../../services/presenceService';
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let unsubscribeProfile = null;
+    let cleanupPresence = null;
 
     // Listens for sign-in/sign-out. AppNavigator has its own listener for
     // routing; this one keeps `user` here in sync with the live Firestore profile.
@@ -21,12 +23,18 @@ export const AuthProvider = ({ children }) => {
         unsubscribeProfile();
         unsubscribeProfile = null;
       }
+      if (cleanupPresence) {
+        cleanupPresence();
+        cleanupPresence = null;
+      }
 
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
+
+      cleanupPresence = initPresence(firebaseUser.uid);
 
       unsubscribeProfile = firestore()
         .collection('users')
@@ -55,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       unsubscribeAuth();
       if (unsubscribeProfile) unsubscribeProfile();
+      if (cleanupPresence) cleanupPresence();
     };
   }, []);
 

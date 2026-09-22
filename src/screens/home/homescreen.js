@@ -13,6 +13,17 @@ import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
 import { getAllUsers } from '../../services/userService';
 import { createDirectChat } from '../../services/chatService';
+import Svg, { Path } from 'react-native-svg';
+
+const Icon = ({ name, size = 24, color = '#000' }) => {
+  let path = '';
+  if (name === 'chevron-back-outline') path = 'M15 19l-7-7 7-7';
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <Path d={path} />
+    </Svg>
+  );
+};
 
 export default function ContactsScreen({ navigation }) {
   const { user } = useAuth();
@@ -89,8 +100,16 @@ export default function ContactsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.headerBg }]}>
+      <View style={[styles.header, { backgroundColor: colors.headerBg || colors.primary }]}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Chats')}
+          style={styles.backBtn}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+        >
+           <Icon name="chevron-back-outline" size={24} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Find People</Text>
+        <View style={{width: 40}} />
       </View>
 
       <View style={styles.searchContainer}>
@@ -132,9 +151,11 @@ const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
     padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
+  backBtn: { padding: 4 },
   headerTitle: {
     color: '#fff',
     fontSize: 18,

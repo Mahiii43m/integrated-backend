@@ -17,7 +17,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
-import { LogoSVG } from '../../components/Branding';
+import LogoSVG from '../../assets/images/logo.svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -69,6 +69,10 @@ export default function SignUpScreen({ navigation }) {
   const [meetsNumbers, setMeetsNumbers] = useState(false);
   const [meetsSpecialChar, setMeetsSpecialChar] = useState(false);
 
+  // Refs to track previous values so we can detect paste (large length jumps)
+  const prevPasswordRef = useRef('');
+  const prevConfirmPasswordRef = useRef('');
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -85,12 +89,36 @@ export default function SignUpScreen({ navigation }) {
   }, []);
 
   const checkPasswordRequirements = (text) => {
+    const prevLength = prevPasswordRef.current.length;
+    const newLength = text.length;
+    const isLikelyPaste = newLength - prevLength > 1;
+
+    if (isLikelyPaste) {
+      // Reject the paste — keep the field at its previous value
+      return;
+    }
+
+    prevPasswordRef.current = text;
     setError('');
     setPassword(text);
     setMeetsLength(text.length >= 12);
     setMeetsUppercase(/[A-Z]/.test(text));
     setMeetsNumbers((text.match(/\d/g) || []).length >= 3);
     setMeetsSpecialChar(/[!@#$%^&*(),.?":{}|<>_\-+=~`[\]\\/;']/.test(text));
+  };
+
+  const handleConfirmPasswordChange = (text) => {
+    const prevLength = prevConfirmPasswordRef.current.length;
+    const newLength = text.length;
+    const isLikelyPaste = newLength - prevLength > 1;
+
+    if (isLikelyPaste) {
+      return;
+    }
+
+    prevConfirmPasswordRef.current = text;
+    setError('');
+    setConfirmPassword(text);
   };
 
   const handleSignUp = async () => {
@@ -243,6 +271,7 @@ export default function SignUpScreen({ navigation }) {
                     onChangeText={checkPasswordRequirements}
                     editable={!loading}
                     selectionColor="#0088cc"
+                    contextMenuHidden={true}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -276,12 +305,10 @@ export default function SignUpScreen({ navigation }) {
                     placeholderTextColor="rgba(0,0,0,0.35)"
                     secureTextEntry={!showConfirmPassword}
                     value={confirmPassword}
-                    onChangeText={(text) => {
-                      setError('');
-                      setConfirmPassword(text);
-                    }}
+                    onChangeText={handleConfirmPasswordChange}
                     editable={!loading}
                     selectionColor="#0088cc"
+                    contextMenuHidden={true}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}

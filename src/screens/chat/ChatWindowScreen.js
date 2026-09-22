@@ -25,8 +25,9 @@ import { useTheme } from '../../firebase/context/ThemeContext';
 import Typography from '../../components/Typography';
 import { SPACING, RADIUS } from '../../constants/Typography';
 import { useAuth } from '../../firebase/context/AuthContext';
-import { subscribeToMessages, sendMessage, uploadChatAttachment } from '../../services/messageService';
+import { subscribeToMessages, sendMessage, markMessageRead, uploadChatAttachment } from '../../services/messageService';
 import { useUserProfiles, getDisplayName } from '../../services/userService';
+import { db } from '../../firebase/firestore';
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -48,6 +49,8 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'image-outline') path = 'M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M8.5 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z M21 15l-5-5L5 21';
   if (name === 'stop-circle-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M9 9h6v6H9z';
   if (name === 'play-outline') path = 'M5 3l14 9-14 9V3z';
+  if (name === 'checkmark-outline') path = 'M20 6L9 17l-5-5';
+  if (name === 'checkmark-done-outline') path = 'M18 6l-9 11-4-5 M22 10l-9 11-4-5';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -74,6 +77,7 @@ export default function ChatWindowScreen({ route, navigation }) {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
+  const [presence, setPresence] = useState(null);
 
   // Attachment state
   const [uploading, setUploading] = useState(false);
@@ -95,9 +99,40 @@ export default function ChatWindowScreen({ route, navigation }) {
 
   useEffect(() => {
     if (!chatId || isDecisionChat) return;
-    const unsubscribe = subscribeToMessages(chatId, (fetchedMessages) => setMessages(fetchedMessages));
+    const unsubscribe = subscribeToMessages(chatId, (fetchedMessages) => {
+      setMessages(fetchedMessages);
+      // Mark latest message as read if it's from the other person
+      if (fetchedMessages.length > 0) {
+        const last = fetchedMessages[fetchedMessages.length - 1];
+        if (last.senderId !== user?.uid && !last.readBy?.includes(user?.uid)) {
+          markMessageRead(chatId, last.id, user.uid);
+        }
+      }
+    });
     return unsubscribe;
-  }, [chatId, isDecisionChat]);
+  }, [chatId, isDecisionChat, user?.uid]);
+
+  useEffect(() => {
+    if (groupDetails || !chatId) return;
+    const otherUid = senderUids.find(id => id !== user?.uid);
+    if (!otherUid) return;
+
+    const unsubscribe = db.collection('presence').doc(otherUid).onSnapshot(doc => {
+      if (doc.exists) setPresence(doc.data());
+    });
+    return unsubscribe;
+  }, [chatId, groupDetails, user?.uid, senderUids]);
+
+  const getPresenceStatus = () => {
+    if (groupDetails) return `${groupDetails.participants?.length || 0} members`;
+    if (!presence) return 'online';
+    if (presence.isOnline) return 'online';
+    if (presence.lastSeen) {
+      const date = presence.lastSeen.toDate();
+      return `last seen ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    return 'offline';
+  };
 
   const handleSendMessage = async (type = 'text', attachment = null) => {
     if ((type === 'text' && !inputText.trim()) || !chatId || !user?.uid) return;
@@ -233,6 +268,15 @@ export default function ChatWindowScreen({ route, navigation }) {
           <Text style={{ color: isMe ? 'rgba(255,255,255,0.7)' : secondaryText, fontSize: 9, textAlign: 'right', marginTop: 4 }}>
             {formatMessageTime(item.createdAt)}
           </Text>
+          {isMe && (
+            <View style={styles.tickContainer}>
+              <Icon
+                name={item.readBy?.length > 1 ? "checkmark-done-outline" : "checkmark-outline"}
+                size={12}
+                color={item.readBy?.length > 1 ? "#34B7F1" : "rgba(255,255,255,0.6)"}
+              />
+            </View>
+          )}
         </View>
       </View>
     );
@@ -245,12 +289,31 @@ export default function ChatWindowScreen({ route, navigation }) {
 
         {/* Header */}
         <View style={[styles.header, { backgroundColor: brandColor }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          >
             <Icon name="chevron-back-outline" size={28} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerTitleContainer} onPress={() => groupDetails && setShowInfoModal(true)} activeOpacity={0.7}>
-            <Text style={styles.headerTitle}>{contactName}</Text>
-            <Text style={styles.headerSubtitle}>{groupDetails ? `${groupDetails.participants?.length || 0} members` : 'online'}</Text>
+          <TouchableOpacity
+            style={styles.headerTitleContainer}
+            onPress={() => navigation.navigate('ChatDetails', {
+              contactName,
+              groupDetails,
+              otherUser: !groupDetails ? userProfiles[senderUids.find(id => id !== user?.uid)] : null
+            })}
+            activeOpacity={0.7}
+          >
+            <View style={styles.headerProfileRow}>
+              <View style={[styles.headerAvatar, { borderColor: '#fff' }]}>
+                <Text style={styles.headerAvatarText}>{contactName.charAt(0).toUpperCase()}</Text>
+              </View>
+              <View style={styles.headerTextCol}>
+                <Text style={styles.headerTitle}>{contactName}</Text>
+                <Text style={styles.headerSubtitle}>{getPresenceStatus()}</Text>
+              </View>
+            </View>
           </TouchableOpacity>
           <View style={{ width: 40 }} />
         </View>
@@ -325,8 +388,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButton: { padding: 4 },
-  headerTitleContainer: { flex: 1, alignItems: 'center' },
-  headerTitle: { fontSize: 17, fontWeight: 'bold', color: '#fff' },
+  headerProfileRow: { flexDirection: 'row', alignItems: 'center' },
+  headerAvatar: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+  },
+  headerAvatarText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  headerTextCol: { alignItems: 'flex-start' },
+  headerTitleContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
   headerSubtitle: { fontSize: 11, color: '#fff', opacity: 0.8 },
   messagesListContent: { padding: 15, paddingBottom: 25 },
   messageRow: { flexDirection: 'row', marginBottom: 15, alignItems: 'flex-end' },
@@ -338,6 +414,7 @@ const styles = StyleSheet.create({
   bubbleMe: { borderBottomRightRadius: 4 },
   bubbleThem: { borderBottomLeftRadius: 4 },
   senderNameText: { fontSize: 10, fontWeight: 'bold', marginBottom: 2 },
+  tickContainer: { position: 'absolute', bottom: 4, left: 8 },
   messageImage: { width: 200, height: 200, borderRadius: 12, marginVertical: 4 },
   fileAttachment: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.05)', padding: 8, borderRadius: 8, marginVertical: 4 },
   voiceAttachment: { flexDirection: 'row', alignItems: 'center', minWidth: 150, padding: 8 },

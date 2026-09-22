@@ -14,6 +14,18 @@ import {
 import { useAuth } from '../../firebase/context/AuthContext';
 import { subscribeToMessages, sendMessage } from '../../services/messageService';
 
+import Svg, { Path } from 'react-native-svg';
+
+const Icon = ({ name, size = 24, color = '#000' }) => {
+  let path = '';
+  if (name === 'chevron-back-outline') path = 'M15 19l-7-7 7-7';
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <Path d={path} />
+    </Svg>
+  );
+};
+
 export default function ChatScreen({ route, navigation }) {
   const { chatId, name } = route.params || { name: 'Chat' };
   const { user } = useAuth();
@@ -73,8 +85,12 @@ export default function ChatScreen({ route, navigation }) {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backText}>←</Text>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          >
+            <Icon name="chevron-back-outline" size={28} color="#0088cc" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{name}</Text>
           <View style={{ width: 40 }} />

@@ -10,6 +10,7 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import VerifyEmailScreen from '../screens/auth/VerifyEmailScreen';
 import ChatWindowScreen from '../screens/chat/ChatWindowScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
+import ChatDetailsScreen from '../screens/Profile/ChatDetailsScreen';
 import MainTabNavigator from './MainTabNavigator';
 
 import SettingsScreen from '../screens/settings/SettingsScreen';
@@ -64,6 +65,7 @@ export default function AppNavigator() {
           <>
             <Stack.Screen name="MainTabs" component={MainTabNavigator} />
             <Stack.Screen name="ChatWindow" component={ChatWindowScreen} />
+            <Stack.Screen name="ChatDetails" component={ChatDetailsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Notifications" component={NotificationsScreen} />

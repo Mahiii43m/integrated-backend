@@ -14,7 +14,7 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
 import {
@@ -26,45 +26,215 @@ import {
 import { useUserProfiles, getDisplayName } from '../../services/userService';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
-  let path = '';
-  if (name === 'planet-outline') path = 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 6v12 M6 12h12';
-  if (name === 'rocket-outline') path = 'M4.5 16.5c0 0 4.5 1.5 7.5-3s3-7.5 3-7.5-4.5-1.5-7.5 3-3 7.5-3 7.5z M8 13l-3 3 M11 10l3-3';
-  if (name === 'map-outline') path = 'M1 6v15l7-4 8 4 7-4V2l-7 4-8-4-7 4z M8 2v15 M16 6v15';
-  if (name === 'flask-outline') path = 'M9 3v12a3 3 0 0 0 6 0V3 M8 3h8 M12 15h.01';
-  if (name === 'radio-outline') path = 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M12 7a5 5 0 1 0 0 10 M12 2a10 10 0 1 0 0 20';
-  if (name === 'shield-checkmark') path = 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4';
-  if (name === 'pin') path = 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z';
-  if (name === 'attach-outline') path = 'M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48';
-  if (name === 'lock-closed') path = 'M7 11V7a5 5 0 0 1 10 0v4 M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z';
-  if (name === 'add-circle-outline') path = 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 8v8 M8 12h8';
-  if (name === 'notifications-outline') path = 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9z M13.73 21a2 2 0 0 1-3.46 0';
-  if (name === 'ellipsis-vertical') path = 'M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0 M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0 M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0';
-  if (name === 'search-outline') path = 'M21 21l-6-6 m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z';
-  if (name === 'close-circle') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M15 9l-6 6 M9 9l6 6';
-  if (name === 'chatbubble-outline') path = 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.1c1.5 0 3 .4 4.3 1.1L21 1.5l-1.1 4.2c.7 1.3 1.1 2.8 1.1 4.3z';
-  if (name === 'people-outline') path = 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0-4-4 4 4 0 0 0 4 4z';
-  if (name === 'sunny-outline') path = 'M12 2v2 M12 20v2 M4.93 4.93l1.41 1.41 M17.66 17.66l1.41 1.41 M2 12h2 M20 12h2 M4.93 19.07l1.41-1.41 M17.66 6.34l1.41-1.41 M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z';
-  if (name === 'moon-outline') path = 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z';
-  if (name === 'bookmark-outline') path = 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z';
-  if (name === 'information-circle-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 16v-4 M12 8h.01';
-  if (name === 'chatbubble-ellipses-outline') path = 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.1c1.5 0 3 .4 4.3 1.1L21 1.5l-1.1 4.2c.7 1.3 1.1 2.8 1.1 4.3z M8 12h.01 M12 12h.01 M16 12h.01';
-  if (name === 'settings-outline') path = 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z';
-  if (name === 'person-outline') path = 'M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2';
+  const strokeWidth = 1.8;
 
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <Path d={path} />
-    </Svg>
-  );
+  if (name === 'group') {
+    // Lucide UsersRound
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M18 21a8 8 0 0 0-16 0" />
+        <Circle cx="10" cy="8" r="5" />
+        <Path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
+      </Svg>
+    );
+  }
+  if (name === 'profile') {
+    // Lucide UserCircle
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="10" />
+        <Circle cx="12" cy="10" r="3" />
+        <Path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+      </Svg>
+    );
+  }
+  if (name === 'pin') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+      </Svg>
+    );
+  }
+  if (name === 'search') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="11" cy="11" r="8" />
+        <Path d="m21 21-4.3-4.3" />
+      </Svg>
+    );
+  }
+  if (name === 'more') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="1" />
+        <Circle cx="12" cy="5" r="1" />
+        <Circle cx="12" cy="19" r="1" />
+      </Svg>
+    );
+  }
+  if (name === 'notifications') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+        <Path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+      </Svg>
+    );
+  }
+  if (name === 'add') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="10" />
+        <Path d="M12 8v8" />
+        <Path d="M8 12h8" />
+      </Svg>
+    );
+  }
+  if (name === 'close-circle') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="10" />
+        <Path d="m15 9-6 6" />
+        <Path d="m9 9 6 6" />
+      </Svg>
+    );
+  }
+  if (name === 'planet') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="10" />
+        <Path d="M2 12h20" />
+        <Path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </Svg>
+    );
+  }
+  if (name === 'rocket') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+        <Path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+        <Path d="M9 12H4s.5-1 1-4c2 1 2 1 4 2z" />
+        <Path d="M12 15v5s1-.5 4-1c-1-2-1-2-2-4z" />
+      </Svg>
+    );
+  }
+  if (name === 'map') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z" />
+        <Path d="M9 3v15" />
+        <Path d="M15 6v15" />
+      </Svg>
+    );
+  }
+  if (name === 'flask') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M9 3h6" />
+        <Path d="M10 3v10.17a4 4 0 1 1-1.24 3.06c.02-.8.32-1.58.87-2.19l.37-.44V3z" />
+      </Svg>
+    );
+  }
+  if (name === 'radio') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M4.9 19.1a1 1 0 0 0 1.4 0l12.8-12.8a1 1 0 1 0-1.4-1.4L4.9 17.7a1 1 0 0 0 0 1.4z" />
+        <Circle cx="12" cy="12" r="10" />
+      </Svg>
+    );
+  }
+  if (name === 'shield-checkmark') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <Path d="m9 12 2 2 4-4" />
+      </Svg>
+    );
+  }
+  if (name === 'checkmark') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M20 6L9 17l-5-5" />
+      </Svg>
+    );
+  }
+  if (name === 'checkmark-done') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M18 6l-9 11-4-5 M22 10l-9 11-4-5" />
+      </Svg>
+    );
+  }
+  if (name === 'attach') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+      </Svg>
+    );
+  }
+  if (name === 'lock-closed') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z" />
+        <Path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </Svg>
+    );
+  }
+  if (name === 'chatbubble') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+      </Svg>
+    );
+  }
+  if (name === 'bookmark') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+      </Svg>
+    );
+  }
+  if (name === 'info') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="10" />
+        <Path d="M12 16v-4" />
+        <Path d="M12 8h.01" />
+      </Svg>
+    );
+  }
+  if (name === 'sun') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Circle cx="12" cy="12" r="5" />
+        <Path d="M12 1v2" />
+        <Path d="M12 21v2" />
+        <Path d="M4.22 4.22l1.42 1.42" />
+        <Path d="M18.36 18.36l1.42 1.42" />
+        <Path d="M1 12h2" />
+        <Path d="M21 12h2" />
+        <Path d="M4.22 19.78l1.42-1.42" />
+        <Path d="M18.36 5.64l1.42-1.42" />
+      </Svg>
+    );
+  }
+  if (name === 'moon') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <Path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9z" />
+      </Svg>
+    );
+  }
+
+  return null;
 };
 
 // ─── Department Tabs ────────────────────────────────────────────────────────
 const DEPARTMENT_TABS = [
-  { id: 'all', label: 'All', icon: 'planet-outline' },
-  { id: 'space', label: 'Space Science', icon: 'rocket-outline' },
-  { id: 'geospatial', label: 'Geospatial', icon: 'map-outline' },
-  { id: 'research', label: 'Research', icon: 'flask-outline' },
-  { id: 'operations', label: 'Operations', icon: 'radio-outline' },
+  { id: 'all', label: 'All', icon: 'planet' },
+  { id: 'space', label: 'Space Science', icon: 'rocket' },
+  { id: 'geospatial', label: 'Geospatial', icon: 'map' },
+  { id: 'research', label: 'Research', icon: 'flask' },
+  { id: 'operations', label: 'Operations', icon: 'radio' },
 ];
 
 const DEPARTMENT_TAG_MAP = {
@@ -227,40 +397,58 @@ export default function ChatsListScreen({ navigation }) {
     const displayName = getChatDisplayName(item);
 
     return (
-      <TouchableOpacity
+      <View
         style={[
           styles.chatRow,
           isPinned && [styles.pinnedRow, { borderLeftColor: pinnedBorderColor }],
           { backgroundColor: cardColor, borderBottomColor: borderColor },
         ]}
-        onPress={() =>
-          navigation.navigate('ChatWindow', {
-            chatId: item.id,
-            contactName: displayName,
-            groupDetails: isGroup
-              ? {
-                  name: item.groupName,
-                  department: item.department,
-                  participants: item.participants,
-                  admins: item.admins,
-                }
-              : null,
-          })
-        }
-        onLongPress={() => handleLongPressChat(item)}
-        delayLongPress={350}
-        activeOpacity={0.6}
       >
-        <View style={[styles.avatar, isGroup && styles.avatarGroup]}>
-          <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
-          {isAdmin && (
-            <View style={[styles.adminDot, { borderColor: isDark ? '#0a0e1a' : '#ffffff' }]}>
-              <Icon name="shield-checkmark" size={10} color="#ffffff" />
-            </View>
-          )}
-        </View>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('ChatDetails', {
+            contactName: displayName,
+            groupDetails: isGroup ? {
+              name: item.groupName,
+              department: item.department,
+              participants: item.participants,
+              admins: item.admins,
+              groupPhotoUrl: item.groupPhotoUrl,
+              description: item.description
+            } : null,
+            otherUser: !isGroup ? userProfiles[item.participants?.find(uid => uid !== user?.uid)] : null
+          })}
+        >
+          <View style={[styles.avatar, { borderColor: brandColor }, isGroup && styles.avatarGroup]}>
+            <Text style={[styles.avatarText, { color: brandColor }]}>{displayName.charAt(0).toUpperCase()}</Text>
+            {isAdmin && (
+              <View style={[styles.adminDot, { borderColor: isDark ? '#0a0e1a' : '#ffffff' }]}>
+                <Icon name="shield-checkmark" size={10} color="#ffffff" />
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
 
-        <View style={styles.chatInfo}>
+        <TouchableOpacity
+          style={styles.chatInfo}
+          activeOpacity={0.6}
+          onPress={() =>
+            navigation.navigate('ChatWindow', {
+              chatId: item.id,
+              contactName: displayName,
+              groupDetails: isGroup
+                ? {
+                    name: item.groupName,
+                    department: item.department,
+                    participants: item.participants,
+                    admins: item.admins,
+                  }
+                : null,
+            })
+          }
+          onLongPress={() => handleLongPressChat(item)}
+          delayLongPress={350}
+        >
           <View style={styles.chatTopRow}>
             <View style={styles.nameRow}>
               {isPinned && (
@@ -284,9 +472,20 @@ export default function ChatsListScreen({ navigation }) {
           </View>
 
           <View style={styles.chatBottomRow}>
-            <Text style={[styles.chatPreview, { color: secondaryText }]} numberOfLines={1}>
-              {getChatPreviewText(item)}
-            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+              {item.lastMessage?.senderId === user?.uid && (
+                <View style={{marginRight: 4}}>
+                  <Icon
+                    name={item.lastMessage?.readBy?.length > 1 ? "checkmark-done" : "checkmark"}
+                    size={14}
+                    color={item.lastMessage?.readBy?.length > 1 ? "#34B7F1" : secondaryText}
+                  />
+                </View>
+              )}
+              <Text style={[styles.chatPreview, { color: secondaryText }]} numberOfLines={1}>
+                {getChatPreviewText(item)}
+              </Text>
+            </View>
             {item.unreadCount > 0 && (
               <View style={[styles.unreadBadge, { backgroundColor: brandColor }]}>
                 <Text style={styles.unreadText}>{item.unreadCount}</Text>
@@ -300,15 +499,15 @@ export default function ChatsListScreen({ navigation }) {
             </Text>
             <View style={styles.iconRow}>
               {hasFiles && (
-                <Icon name="attach-outline" size={14} color={secondaryText} />
+                <Icon name="attach" size={14} color={secondaryText} />
               )}
               <View style={{marginLeft: 4}}>
                 <Icon name="lock-closed" size={12} color={secondaryText} />
               </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -376,23 +575,23 @@ export default function ChatsListScreen({ navigation }) {
               activeOpacity={0.7}
               style={{ marginRight: 12 }}
             >
-              <Icon name="add-circle-outline" size={22} color="#ffffff" />
+              <Icon name="add" size={22} color="#ffffff" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('Notifications')}
               activeOpacity={0.7}
               style={{ marginRight: 12 }}
             >
-              <Icon name="notifications-outline" size={22} color="#ffffff" />
+              <Icon name="notifications" size={22} color="#ffffff" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setShowMenu(!showMenu)} activeOpacity={0.7}>
-              <Icon name="ellipsis-vertical" size={22} color="#ffffff" />
+              <Icon name="more" size={22} color="#ffffff" />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={[styles.searchBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)', borderColor: borderColor }]}>
-          <Icon name="search-outline" size={18} color={secondaryText} />
+          <Icon name="search" size={18} color={secondaryText} />
           <TextInput
             ref={searchInputRef}
             style={[styles.searchInput, { color: textColor, marginLeft: 8 }]}
@@ -457,7 +656,7 @@ export default function ChatsListScreen({ navigation }) {
         ItemSeparatorComponent={() => <View style={[styles.divider, { borderBottomColor: borderColor }]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Icon name="chatbubble-outline" size={48} color={secondaryText} />
+            <Icon name="chatbubble" size={48} color={secondaryText} />
             <Text style={[styles.emptyText, { color: secondaryText }]}>No chats found</Text>
           </View>
         }
@@ -467,54 +666,50 @@ export default function ChatsListScreen({ navigation }) {
         <TouchableOpacity style={styles.menuOverlay} activeOpacity={1} onPress={() => setShowMenu(false)}>
           <View style={[styles.menuContainer, { backgroundColor: cardColor, borderColor: borderColor }]}>
             <TouchableOpacity style={styles.menuItem} onPress={openNewChat}>
-              <Icon name="chatbubble-outline" size={20} color={accentColor} />
+              <Icon name="chatbubble" size={20} color={accentColor} />
               <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>New Chat</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={openNewGroup}>
-              <Icon name="people-outline" size={20} color={brandColor} />
+              <Icon name="group" size={20} color={brandColor} />
               <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>New Group</Text>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
             <TouchableOpacity style={styles.menuItem} onPress={handleDayMode}>
-              <Icon name={isDark ? 'sunny-outline' : 'moon-outline'} size={20} color={secondaryText} />
+              <Icon name={isDark ? 'sun' : 'moon'} size={20} color={secondaryText} />
               <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>
                 {isDark ? 'Day Mode' : 'Night Mode'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={handleSavedMessages}>
-              <Icon name="bookmark-outline" size={20} color={secondaryText} />
+              <Icon name="bookmark" size={20} color={secondaryText} />
               <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>Saved Messages</Text>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
             <TouchableOpacity style={styles.menuItem} onPress={openAboutSSGI}>
-              <Icon name="information-circle-outline" size={20} color={secondaryText} />
+              <Icon name="info" size={20} color={secondaryText} />
               <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>About SSGI</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       )}
 
-      <View style={[styles.bottomBar, { backgroundColor: bgColor, borderTopColor: borderColor }]}>
-        <View style={[styles.navCapsule, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' }]}>
-          <TouchableOpacity style={styles.navBtn} activeOpacity={0.7} onPress={() => setActiveTab('all')}>
-            <Icon
-              name="chatbubble-ellipses-outline"
-              size={24}
-              color={activeTab === 'all' ? brandColor : '#aaaaaa'}
-            />
-          </TouchableOpacity>
+      <View style={styles.bottomBar}>
+        <View style={[styles.navCapsule, { backgroundColor: isDark ? 'rgba(30, 40, 60, 0.85)' : 'rgba(255, 255, 255, 0.85)', borderColor: borderColor }]}>
           <TouchableOpacity style={styles.navBtn} activeOpacity={0.7} onPress={openNewGroup}>
-            <Icon name="people-outline" size={24} color="#aaaaaa" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Settings')}>
-            <Icon name="settings-outline" size={24} color="#aaaaaa" />
+            <View style={[styles.floatingCircle, { borderColor: brandColor, shadowColor: brandColor }]}>
+              <Icon name="group" size={24} color={secondaryText} />
+            </View>
+            <Text style={[styles.navLabel, { color: secondaryText }]}>group</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Profile')}>
-            {user?.profilePicture ? (
-              <Image source={{ uri: user.profilePicture }} style={styles.navAvatar} />
-            ) : (
-              <Icon name="person-outline" size={24} color="#aaaaaa" />
-            )}
+            <View style={[styles.floatingCircle, { borderColor: brandColor, shadowColor: brandColor }]}>
+              {user?.profilePicture ? (
+                <Image source={{ uri: user.profilePicture }} style={styles.navAvatar} />
+              ) : (
+                <Icon name="profile" size={24} color={secondaryText} />
+              )}
+            </View>
+            <Text style={[styles.navLabel, { color: secondaryText }]}>profile</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -614,14 +809,15 @@ const styles = StyleSheet.create({
   },
   pinnedRow: { borderLeftWidth: 3, paddingLeft: 13 },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#b6b6b6',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
     position: 'relative',
+    borderWidth: 2,
   },
   avatarGroup: { borderWidth: 2, borderColor: '#6c5ce7' },
   avatarText: { fontSize: 20, fontWeight: '600', color: '#ffffff' },
@@ -705,24 +901,50 @@ const styles = StyleSheet.create({
   menuItemText: { fontSize: 15 },
   menuDivider: { height: 1, marginVertical: 4, marginHorizontal: 12 },
   bottomBar: {
-    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 100,
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
-    borderTopWidth: 1,
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    zIndex: 10,
   },
   navCapsule: {
-    flex: 1,
+    width: '60%',
     flexDirection: 'row',
-    borderRadius: 28,
-    height: 50,
+    borderRadius: 35,
+    height: 80,
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    // Floating shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
   },
-  navBtn: { flex: 1, alignItems: 'center', paddingVertical: 6 },
-  navAvatar: { width: 24, height: 24, borderRadius: 12 },
+  navBtn: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  navLabel: {
+    fontSize: 10,
+    marginTop: 4,
+    fontWeight: '600',
+    textTransform: 'lowercase',
+  },
+  floatingCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    // Inner shadow for depth
+    elevation: 2,
+  },
+  navAvatar: { width: 38, height: 38, borderRadius: 19 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',
