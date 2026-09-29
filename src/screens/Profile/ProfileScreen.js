@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../firebase/context/ThemeContext';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -53,6 +54,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function ProfileScreen({ navigation }) {
   const { user, logout, updateProfilePicture } = useAuth();
+  const { t } = useTranslation();
   const { colors, theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -239,13 +241,13 @@ export default function ProfileScreen({ navigation }) {
 
           <View style={styles.badgeContainer}>
             <View style={[styles.badge, { backgroundColor: accentColor + '20' }]}>
-              <Text style={{ fontSize: 12, color: accentColor }}>SSGI Staff</Text>
+              <Text style={{ fontSize: 12, color: accentColor }}>{t('profile.ssgiStaff')}</Text>
             </View>
             <View style={[styles.badge, { backgroundColor: brandColor + '20' }]}>
               <Text style={{ fontSize: 12, color: brandColor }}>Geospatial Division</Text>
             </View>
             <View style={[styles.badge, { backgroundColor: goldAccent + '20' }]}>
-              <Text style={{ fontSize: 12, color: goldAccent }}>Space Science</Text>
+              <Text style={{ fontSize: 12, color: goldAccent }}>{t('profile.spaceScience')}</Text>
             </View>
           </View>
         </View>
@@ -255,11 +257,11 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.orgHeader}>
             <Icon name="business-outline" size={22} color={goldAccent} />
             <Text style={[styles.orgTitle, { color: textColor }]}>
-              Space Science & Geospatial Institute
+              {t('profile.instituteName')}
             </Text>
           </View>
           <Text style={[styles.orgDescription, { color: secondaryText }]}>
-            Leading Africa's space and geospatial sector through research, innovation, and collaboration.
+            {t('profile.instituteDesc')}
           </Text>
           <TouchableOpacity style={[styles.orgButton, { backgroundColor: brandColor }]} onPress={openSSGIWebsite}>
             <Icon name="globe-outline" size={18} color="#ffffff" />
@@ -277,25 +279,25 @@ export default function ProfileScreen({ navigation }) {
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => setEditModalVisible(true)}>
             <Icon name="person-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>Edit Profile</Text>
+            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.editProfile')}</Text>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => setPasswordModalVisible(true)}>
             <Icon name="key-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>Change Password</Text>
+            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.changePassword')}</Text>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => Alert.alert('My Publications', 'Feature coming soon!')}>
+          <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => Alert.alert(t('profile.myPublications'), t('profile.featureComingSoon'))}>
             <Icon name="document-text-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>My Publications</Text>
+            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.myPublications')}</Text>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => navigation.navigate('MainTabs', { screen: 'Chats' })}>
             <Icon name="people-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>Group Chats</Text>
+            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.groupChats')}</Text>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
         </View>
@@ -332,7 +334,7 @@ export default function ProfileScreen({ navigation }) {
       <Modal visible={editModalVisible} transparent animationType="slide" onRequestClose={() => setEditModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>Edit Profile</Text>
+            <Text style={[styles.modalTitle, { color: textColor }]}>{t('profile.editProfile')}</Text>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: borderColor, backgroundColor: cardColor }]}
               placeholder="Full Name"
@@ -356,7 +358,7 @@ export default function ProfileScreen({ navigation }) {
       <Modal visible={passwordModalVisible} transparent animationType="slide" onRequestClose={() => setPasswordModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>Change Password</Text>
+            <Text style={[styles.modalTitle, { color: textColor }]}>{t('profile.changePassword')}</Text>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: borderColor, backgroundColor: cardColor }]}
               placeholder="New Password (min 12 chars)"

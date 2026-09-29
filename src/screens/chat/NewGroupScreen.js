@@ -287,10 +287,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.base,
-    paddingTop: Platform.OS === 'ios' ? 0 : SPACING.md,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 8 : 8,
     paddingBottom: SPACING.sm,
   },
-  backButton: { padding: SPACING.xs, width: 40 },
+  backButton: { padding: 8, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { flex: 1, textAlign: 'center' },
   tabContainer: {
     flexDirection: 'row',

@@ -21,6 +21,7 @@ import NewGroupScreen from '../screens/chat/NewGroupScreen';
 import AboutScreen from '../screens/settings/AboutScreen';
 import AccountScreen from '../screens/settings/AccountScreen';
 import ThemeScreen from '../screens/settings/ThemeScreen';
+import LanguageScreen from '../screens/settings/LanguageScreen';
 import NotificationsSettingsScreen from '../screens/settings/NotificationsSettingsScreen';
 import PrivacySecurityScreen from '../screens/settings/PrivacySecurityScreen';
 import HelpFAQScreen from '../screens/settings/HelpFAQScreen';
@@ -86,6 +87,7 @@ export default function AppNavigator() {
               initialParams={{ title: 'Notification Sound' }}
             />
             <Stack.Screen name="ThemePicker" component={ThemeScreen} />
+            <Stack.Screen name="Language" component={LanguageScreen} />
             <Stack.Screen
               name="AccentColor"
               component={BaseScreen}

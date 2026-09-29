@@ -15,8 +15,10 @@ import {
   StatusBar,
 } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import T from '../../components/T';
 import {
   subscribeToUserChats,
   getOrCreateSelfChat,
@@ -78,6 +80,7 @@ const DEPARTMENT_TAG_MAP = {
 
 export default function ChatsListScreen({ navigation }) {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const { theme, toggleTheme, colors } = useTheme();
   const isDark = theme === 'dark';
   const [chats, setChats] = useState([]);
@@ -362,7 +365,7 @@ export default function ChatsListScreen({ navigation }) {
         <View style={styles.headerTopRow}>
           <View style={styles.logoHeaderRow}>
             <Logo width={34} height={34} />
-            <Text style={styles.headerTitleText}>Orbit Chat</Text>
+            <T style={styles.headerTitleText}>{t('chats.title')}</T>
           </View>
 
 
@@ -394,7 +397,7 @@ export default function ChatsListScreen({ navigation }) {
           <TextInput
             ref={searchInputRef}
             style={[styles.searchInput, { color: '#ffffff', marginLeft: 8 }]}
-            placeholder="Search chats or people..."
+            placeholder={t('chats.searchPlaceholder')}
             placeholderTextColor="rgba(255,255,255,0.7)"
             value={searchQuery}
             onChangeText={setSearchQuery}

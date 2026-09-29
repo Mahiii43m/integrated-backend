@@ -16,8 +16,10 @@ import {
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { LogoSVG } from '../../components/Branding';
+import T from '../../components/T';
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,6 +53,7 @@ function validatePassword(password) {
 
 export default function SignUpScreen({ navigation }) {
   const { signUp } = useAuth();
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -170,15 +173,15 @@ export default function SignUpScreen({ navigation }) {
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.welcomeText}>CREATE ACCOUNT</Text>
-              <Text style={styles.appName}>Orbit Chat</Text>
-              <Text style={styles.subtitle}>JOIN THE SPACE COMMUNITY</Text>
+              <T style={styles.welcomeText}>{t('auth.createAccount')}</T>
+              <T style={styles.appName}>Orbit Chat</T>
+              <T style={styles.subtitle}>{t('auth.joinCommunity')}</T>
             </View>
 
             <View style={styles.formContainer}>
               {/* Full Name */}
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>FULL NAME</Text>
+                <T style={styles.inputLabel}>{t('auth.fullName')}</T>
                 <TextInput
                   style={[styles.input, error && styles.inputError]}
                   placeholder="Enter your full name"
@@ -195,7 +198,7 @@ export default function SignUpScreen({ navigation }) {
 
               {/* Phone */}
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>PHONE NUMBER</Text>
+                <T style={styles.inputLabel}>{t('auth.phoneNumber')}</T>
                 <TextInput
                   style={[styles.input, error && styles.inputError]}
                   placeholder="Enter your phone number"
@@ -213,7 +216,7 @@ export default function SignUpScreen({ navigation }) {
 
               {/* Email */}
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>EMAIL</Text>
+                <T style={styles.inputLabel}>{t('auth.email')}</T>
                 <TextInput
                   style={[styles.input, error && styles.inputError]}
                   placeholder="normal@gmail.com"
@@ -232,7 +235,7 @@ export default function SignUpScreen({ navigation }) {
 
               {/* Password */}
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>PASSWORD</Text>
+                <T style={styles.inputLabel}>{t('auth.password')}</T>
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={[styles.input, styles.passwordInput, error && styles.inputError]}
@@ -268,7 +271,7 @@ export default function SignUpScreen({ navigation }) {
 
               {/* Confirm Password */}
               <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>CONFIRM PASSWORD</Text>
+                <T style={styles.inputLabel}>{t('auth.confirmPassword')}</T>
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={[styles.input, styles.passwordInput, error && styles.inputError]}
@@ -309,7 +312,7 @@ export default function SignUpScreen({ navigation }) {
               {loading ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
-                <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+                <T style={styles.buttonText}>{t('auth.createAccount')}</T>
               )}
             </TouchableOpacity>
 
@@ -319,9 +322,9 @@ export default function SignUpScreen({ navigation }) {
                 onPress={() => navigation.navigate('Login')}
                 activeOpacity={0.8}
               >
-                <Text style={styles.signInText}>
-                  Already have an account?<Text style={styles.signInLink}> Sign In</Text>
-                </Text>
+                <T style={styles.signInText}>
+                  {t('auth.haveAccount')}<T style={styles.signInLink}> {t('auth.signInLink')}</T>
+                </T>
               </TouchableOpacity>
             </View>
           </ScrollView>

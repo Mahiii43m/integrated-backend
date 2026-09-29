@@ -1,0 +1,96 @@
+{
+  "onboarding": {
+    "getStarted": "ጀምር"
+  },
+  "auth": {
+    "signIn": "ግባ",
+    "signUp": "ተመዝገብ",
+    "welcomeBack": "ወደ ውስጥ ይግቡ",
+    "tagline": "ከምድር ወደ ጠፈር",
+    "createAccount": "መዝገብ ይክፈቱ",
+    "joinCommunity": "የጠፈር ማህበረሰብን ይቀላቀሉ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "confirmPassword": "የይለፍ ቃል ያረጋግጡ",
+    "fullName": "ሙሉ ስም",
+    "phoneNumber": "የስልክ ቁጥር",
+    "forgotPassword": "የይለፍ ቃል ረሱ?",
+    "noAccount": "መዝገብ የለዎትም?",
+    "haveAccount": "መዝገብ አለዎት?",
+    "signInLink": "ይግቡ",
+    "signUpLink": "ይመዝገቡ",
+    "signingIn": "በመግባት ላይ...",
+    "creatingAccount": "መዝገብ በመክፈት ላይ..."
+  },
+  "tabs": {
+    "chats": "ውይይቶች",
+    "contacts": "እውቂያዎች",
+    "settings": "ቅንብሮች",
+    "profile": "መገለጫ"
+  },
+  "chats": {
+    "title": "ኦርቢት ቻት",
+    "searchPlaceholder": "ውይይቶች ወይም ሰዎች ይፈልጉ...",
+    "all": "ሁሉም",
+    "noConversations": "እስካሁን ውይይት የለም",
+    "startConversation": "ከቡድንዎ ጋር ውይይት ይጀምሩ",
+    "newChat": "አዲስ ውይይት",
+    "newGroup": "አዲስ ቡድን",
+    "calls": "ጥሪዎች",
+    "savedMessages": "የተቀመጡ መልዕክቶች",
+    "aboutSSGI": "ስለ SSGI",
+    "dayMode": "የቀን ሁነታ",
+    "nightMode": "የሌሊት ሁነታ",
+    "signOut": "ውጣ",
+    "signOutButton": "ውጣ",
+    "cancel": "ሰርዝ",
+    "signOutConfirm": "በእርግጥ መውጣት ይፈልጋሉ"
+  },
+  "chat": {
+    "messagePlaceholder": "መልዕክት...",
+    "online": "መስመር ላይ",
+    "typing": "በመጻፍ ላይ...",
+    "photo": "ፎቶ",
+    "video": "ቪዲዮ",
+    "voice": "ድምጽ",
+    "attachment": "አባሪ",
+    "uploading": "አባሪ በመስቀል ላይ...",
+    "call": "ጥሪ",
+    "videoCall": "ቪዲዮ"
+  },
+  "settings": {
+    "account": "መዝገብ",
+    "privacy": "ግላዊነት እና ደህንነት",
+    "notifications": "ማሳወቂያዎች",
+    "theme": "ገጽታ",
+    "backup": "ምትኬ እና ማከማቻ",
+    "devices": "መሳሪያዎች",
+    "help": "እርዳታ እና ጥያቄዎች",
+    "about": "ስለ",
+    "language": "ቋንቋ",
+    "english": "English",
+    "amharic": "አማርኛ"
+  },
+  "notifications": {
+    "preferences": "የማሳወቂያ ምርጫዎች",
+    "ssgiAnnouncements": "የSSGI ማስታወቂያዎች",
+    "training": "ስልጠናዎች እና ወርክሾፖች",
+    "research": "የምርምር ህትመቶች",
+    "events": "ዝግጅቶች እና ጉባኤዎች"
+  },
+  "profile": {
+    "ssgiStaff": "የSSGI ሠራተኛ",
+    "spaceScience": "የጠፈር ሳይንስ",
+    "instituteName": "የጠፈር ሳይንስ እና ጂኦስፓሻል ኢንስቲትዩት",
+    "instituteDesc": "በምርምር፣ በፈጠራ እና በትብብር የአፍሪካን የጠፈር እና ጂኦስፓሻል ዘርፍ መሪ።",
+    "visitWebsite": "የSSGI ድረ-ገጽ ይጎብኙ",
+    "accountSettings": "የመዝገብ ቅንብሮች",
+    "editProfile": "መገለጫ አርትዕ",
+    "changePassword": "የይለፍ ቃል ቀይር",
+    "myPublications": "የእኔ ህትመቶች",
+    "groupChats": "የቡድን ውይይቶች",
+    "featureComingSoon": "ባህሪው በቅርቡ ይመጣል!",
+    "memberSince": "አባል ከ",
+    "researchArea": "የምርምር መስክ"
+  }
+}

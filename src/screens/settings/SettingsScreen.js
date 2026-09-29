@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
@@ -12,8 +11,10 @@ import {
   Image,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import T from '../../components/T';
 
 const LOGO_IMAGE = require('../../../assets/icon.png');
 
@@ -30,6 +31,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'cloud-outline') path = 'M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z';
   if (name === 'notifications-outline') path = 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9z M13.73 21a2 2 0 0 1-3.46 0';
   if (name === 'musical-notes-outline') path = 'M9 18V5l12-2v13 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z';
+  if (name === 'language-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M2 12h20 M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z';
   if (name === 'color-palette-outline') path = 'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z M7 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2z M10 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2z M14 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2z M17 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2z';
   if (name === 'moon-outline') path = 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z';
   if (name === 'color-filter-outline') path = 'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z M12 6v12 M6 12h12';
@@ -47,6 +49,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 export default function SettingsScreen({ navigation }) {
   const { logout, user } = useAuth();
   const { colors, theme, isDark, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   const bgColor = colors.background;
   const textColor = colors.text;
@@ -62,11 +65,11 @@ export default function SettingsScreen({ navigation }) {
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('chats.signOut'),
+      t('chats.signOutConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: logout },
+        { text: t('chats.cancel'), style: 'cancel' },
+        { text: t('chats.signOut'), style: 'destructive', onPress: logout },
       ]
     );
   };
@@ -77,7 +80,7 @@ export default function SettingsScreen({ navigation }) {
 
   const renderSectionHeader = (title) => (
     <View style={styles.sectionHeaderContainer}>
-      <Text style={[styles.sectionHeader, { color: secondaryText }]}>{title}</Text>
+      <T style={[styles.sectionHeader, { color: secondaryText }]}>{title}</T>
     </View>
   );
 
@@ -89,7 +92,7 @@ export default function SettingsScreen({ navigation }) {
     >
       <View style={styles.optionLeft}>
         <Icon name={iconName} size={20} color={accentColor} />
-        <Text style={[styles.optionText, { color: textColor, marginLeft: 14 }]}>{label}</Text>
+        <T style={[styles.optionText, { color: textColor, marginLeft: 14 }]}>{label}</T>
       </View>
       <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
     </TouchableOpacity>
@@ -99,7 +102,7 @@ export default function SettingsScreen({ navigation }) {
     <View style={[styles.option, { backgroundColor: cardColor }]}>
       <View style={styles.optionLeft}>
         <Icon name={iconName} size={20} color={accentColor} />
-        <Text style={[styles.optionText, { color: textColor, marginLeft: 14 }]}>{label}</Text>
+        <T style={[styles.optionText, { color: textColor, marginLeft: 14 }]}>{label}</T>
       </View>
       <Switch
         value={value}
@@ -119,7 +122,7 @@ export default function SettingsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Settings</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('tabs.settings')}</T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -128,57 +131,58 @@ export default function SettingsScreen({ navigation }) {
           <Image source={LOGO_IMAGE} style={styles.avatarLogo} resizeMode="contain" />
         </View>
         <View style={styles.profileInfo}>
-          <Text style={[styles.profileName, { color: textColor }]}>
+          <T style={[styles.profileName, { color: textColor }]}>
             {user?.fullName || user?.name || 'Orbit User'}
-          </Text>
-          <Text style={[styles.profileEmail, { color: secondaryText }]}>
+          </T>
+          <T style={[styles.profileEmail, { color: secondaryText }]}>
             {user?.email || 'orbiting@chat.com'}
-          </Text>
+          </T>
         </View>
         <TouchableOpacity style={styles.editIcon}>
           <Icon name="pencil-outline" size={20} color={secondaryText} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {renderSectionHeader('PROFILE & ACCOUNT')}
-        {renderNavItem('Account', 'Account', 'person-outline')}
-        {renderNavItem('Privacy & Security', 'PrivacySecurity', 'lock-closed-outline')}
-        {renderNavItem('Devices', 'Devices', 'phone-portrait-outline')}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {renderSectionHeader(t('settings.profileAndAccount'))}
+        {renderNavItem(t('settings.account'), 'Account', 'person-outline')}
+        {renderNavItem(t('settings.privacy'), 'PrivacySecurity', 'lock-closed-outline')}
+        {renderNavItem(t('settings.devices'), 'Devices', 'phone-portrait-outline')}
 
-        {renderSectionHeader('CHATS & MESSAGES')}
-        {renderNavItem('Chats', 'Chats', 'chatbubbles-outline')}
-        {renderNavItem('Message Settings', 'MessageSettings', 'settings-outline')}
-        {renderNavItem('Backup & Storage', 'BackupStorage', 'cloud-outline')}
+        {renderSectionHeader(t('settings.chatsAndMessages'))}
+        {renderNavItem(t('tabs.chats'), 'Chats', 'chatbubbles-outline')}
+        {renderNavItem(t('settings.messageSettings'), 'MessageSettings', 'settings-outline')}
+        {renderNavItem(t('settings.backup'), 'BackupStorage', 'cloud-outline')}
 
-        {renderSectionHeader('NOTIFICATIONS & SOUNDS')}
-        {renderNavItem('Notifications', 'NotificationsSettings', 'notifications-outline')}
-        {renderNavItem('Notification Sound', 'NotificationSound', 'musical-notes-outline')}
+        {renderSectionHeader(t('settings.notificationsAndSounds'))}
+        {renderNavItem(t('settings.notifications'), 'NotificationsSettings', 'notifications-outline')}
+        {renderNavItem(t('settings.notificationSound'), 'NotificationSound', 'musical-notes-outline')}
 
-        {renderSectionHeader('APPEARANCE')}
-        {renderNavItem('Theme', 'ThemePicker', 'color-palette-outline')}
-        {renderToggleItem('Dark Mode', isDark, handleToggleDarkMode, 'moon-outline')}
-        {renderNavItem('Accent Color', 'AccentColor', 'color-filter-outline')}
+        {renderSectionHeader(t('settings.appearance'))}
+        {renderNavItem(t('settings.theme'), 'ThemePicker', 'color-palette-outline')}
+        {renderNavItem(t('settings.language'), 'Language', 'language-outline')}
+        {renderToggleItem(t('settings.darkMode'), isDark, handleToggleDarkMode, 'moon-outline')}
+        {renderNavItem(t('settings.accentColor'), 'AccentColor', 'color-filter-outline')}
 
-        {renderSectionHeader('SUPPORT & ABOUT')}
-        {renderNavItem('Help & FAQ', 'HelpFAQ', 'help-circle-outline')}
-        {renderNavItem('About Orbit Chat', 'About', 'information-circle-outline')}
+        {renderSectionHeader(t('settings.supportAndAbout'))}
+        {renderNavItem(t('settings.help'), 'HelpFAQ', 'help-circle-outline')}
+        {renderNavItem(t('settings.aboutOrbit'), 'About', 'information-circle-outline')}
 
         <View style={{ height: 20 }} />
       </ScrollView>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
         <Icon name="log-out-outline" size={20} color="#ffffff" />
-        <Text style={[styles.logoutText, {marginLeft: 8}]}>Sign Out</Text>
+        <T style={[styles.logoutText, {marginLeft: 8}]}>{t('settings.signOut')}</T>
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={[styles.footerText, { color: secondaryText }]}>
+        <T style={[styles.footerText, { color: secondaryText }]}>
           Orbit Chat v1.0.0
-        </Text>
-        <Text style={[styles.footerSubtext, { color: secondaryText }]}>
+        </T>
+        <T style={[styles.footerSubtext, { color: secondaryText }]}>
           Secure Communication for Space & Geospatial Teams
-        </Text>
+        </T>
       </View>
     </SafeAreaView>
   );

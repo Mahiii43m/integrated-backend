@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { TYPOGRAPHY } from '../constants/Typography';
 import { useTheme } from '../firebase/context/ThemeContext';
+import { useTranslation } from '../i18n';
 
 const Typography = ({
   children,
@@ -13,7 +14,10 @@ const Typography = ({
   ...props
 }) => {
   const { colors } = useTheme();
+  const { i18n } = useTranslation();
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
   const textColor = color || colors.text || '#ffffff';
+  const amharicFont = isAmharic ? { fontFamily: 'NotoSansEthiopic-Regular' } : null;
 
   const getStyles = () => {
     switch (variant) {
@@ -39,6 +43,7 @@ const Typography = ({
       style={[
         getStyles(),
         { color: textColor, textAlign: align },
+        amharicFont,
         style,
       ]}
       numberOfLines={numberOfLines}

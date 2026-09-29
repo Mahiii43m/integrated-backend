@@ -14,6 +14,8 @@ import {
   ScrollView,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import { LogoSVG, AntennaTip } from '../../components/Branding';
 import { useAuth } from '../../firebase/context/AuthContext';
 
@@ -21,6 +23,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
   const { signIn } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -134,16 +137,16 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <View style={styles.textContainer}>
-              <Text style={styles.welcomeText}>SIGN IN TO</Text>
+              <T style={styles.welcomeText}>{t('auth.welcomeBack')}</T>
               <Text style={styles.appName}>Orbit Chat</Text>
-              <Text style={styles.subtitle}>FROM EARTH TO SPACE</Text>
+              <T style={styles.subtitle}>{t('auth.tagline')}</T>
             </View>
 
             {/* Spacer so the form starts below the antenna on the curve */}
             <View style={{ height: 180 }} />
 
             <View style={styles.inputWrapper}>
-              <Text style={styles.inputLabel}>EMAIL</Text>
+              <T style={styles.inputLabel}>{t('auth.email')}</T>
               <TextInput
                 style={[styles.input, error ? styles.inputError : null]}
                 placeholder="normal@gmail.com"
@@ -158,7 +161,7 @@ export default function LoginScreen({ navigation }) {
             </View>
 
             <View style={styles.inputWrapper}>
-              <Text style={styles.inputLabel}>PASSWORD</Text>
+              <T style={styles.inputLabel}>{t('auth.password')}</T>
               <View style={styles.passwordInputContainer}>
                 <TextInput
                   style={[styles.input, { flex: 1, paddingRight: 50 }, error ? styles.inputError : null]}
@@ -190,7 +193,7 @@ export default function LoginScreen({ navigation }) {
                 style={styles.forgotPasswordContainer}
                 activeOpacity={0.7}
               >
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                <T style={styles.forgotPasswordText}>{t('auth.forgotPassword')}</T>
               </TouchableOpacity>
             </View>
 
@@ -202,13 +205,13 @@ export default function LoginScreen({ navigation }) {
               disabled={loading || !email.trim() || password.length < 12}
               activeOpacity={0.7}
             >
-              {loading ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.buttonText}>SIGN IN</Text>}
+              {loading ? <ActivityIndicator color="#fff" size="small" /> : <T style={styles.buttonText}>{t('auth.signIn')}</T>}
             </TouchableOpacity>
 
             <View style={styles.signUpContainer}>
-              <Text style={styles.signUpText}>Don't have an account?</Text>
+              <T style={styles.signUpText}>{t('auth.noAccount')}</T>
               <TouchableOpacity onPress={() => navigation.navigate('SignUp')} activeOpacity={0.8}>
-                <Text style={styles.signUpLink}> Sign Up</Text>
+                <T style={styles.signUpLink}> {t('auth.signUpLink')}</T>
               </TouchableOpacity>
             </View>
 
@@ -266,24 +269,24 @@ const styles = StyleSheet.create({
   logoContainer: { alignItems: 'center', marginBottom: 16 },
   textContainer: { marginBottom: 16, alignItems: 'center' },
   welcomeText: {
-    fontSize: 12,
+    fontSize: 9,
     fontWeight: '700',
     color: 'rgba(0, 0, 0, 0.59)',
     textTransform: 'uppercase',
-    letterSpacing: 6,
+    letterSpacing: 1,
     marginBottom: 2,
   },
-  appName: { fontSize: 38, fontWeight: '800', color: '#000000', letterSpacing: -0.5, marginBottom: 6 },
+  appName: { fontSize: 28, fontWeight: '800', color: '#000000', letterSpacing: -0.5, marginBottom: 6 },
   subtitle: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '600',
     color: 'rgba(0, 0, 0, 0.59)',
-    letterSpacing: 4,
+    letterSpacing: 1,
     textTransform: 'uppercase',
   },
   inputWrapper: { marginBottom: 16 },
   inputLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     color: 'rgba(0, 0, 0, 1)',
     marginBottom: 6,
@@ -300,7 +303,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 16,
     height: 52,
-    fontSize: 16,
+    fontSize: 12,
     color: '#000000',
     borderWidth: 1,
     borderColor: 'rgba(0,0,0,0.08)',
@@ -308,7 +311,7 @@ const styles = StyleSheet.create({
   inputError: { borderColor: '#FF6B6B' },
   errorText: {
     color: '#c0392b',
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 6,
     marginBottom: 4,
     textAlign: 'center',
@@ -328,9 +331,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonDisabled: { opacity: 0.5, elevation: 0 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 2 },
+  buttonText: { color: '#fff', fontSize: 12, fontWeight: '700', letterSpacing: 2 },
   footer: { marginTop: 24, alignItems: 'center', paddingBottom: 10 },
-  footerText: { fontSize: 12, color: 'rgba(0, 0, 0, 0.5)', textAlign: 'center', letterSpacing: 0.3, lineHeight: 18 },
+  footerText: { fontSize: 11, color: 'rgba(0, 0, 0, 0.5)', textAlign: 'center', letterSpacing: 0.3, lineHeight: 18 },
   signUpContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -343,9 +346,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,107,53,0.3)',
   },
-  signUpText: { fontSize: 15, fontWeight: '500', color: '#000000' },
+  signUpText: { fontSize: 12, fontWeight: '500', color: '#000000' },
   signUpLink: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
     color: '#1B5674',
     textDecorationLine: 'underline',
@@ -366,5 +369,5 @@ const styles = StyleSheet.create({
     zIndex: 5,
   },
   forgotPasswordContainer: { alignSelf: 'flex-end', marginTop: 8, paddingVertical: 4 },
-  forgotPasswordText: { fontSize: 13, fontWeight: '600', color: '#1B5674', textDecorationLine: 'underline' },
+  forgotPasswordText: { fontSize: 11, fontWeight: '600', color: '#1B5674', textDecorationLine: 'underline' },
 });

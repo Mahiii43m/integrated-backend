@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
   Platform,
   ScrollView,
-  Linking,
   Alert,
   TextInput,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import T from '../../components/T';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -32,8 +32,6 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'chevron-up-outline') path = 'M18 15l-6-6-6 6';
   if (name === 'chevron-down-outline') path = 'M6 9l6 6 6-6';
   if (name === 'bug-outline') path = 'M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M12 7v10 M12 2v3';
-  if (name === 'globe-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 2v20 M2 12h20';
-  if (name === 'mail-outline') path = 'M3 8l9 6 9-6 M21 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z';
   if (name === 'chevron-forward-outline') path = 'M9 5l7 7-7 7';
 
   return (
@@ -43,7 +41,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   );
 };
 
-const FAQ_DATA = [
+const FAQ_DATA_EN = [
   { id: '1', question: 'How do I start a new chat?', answer: 'Tap the "New Chat" button in the bottom navigation or tap the "💬" icon in the chat list header.', icon: 'chatbubble-outline' },
   { id: '2', question: 'Are my messages encrypted?', answer: 'Yes, all messages in Orbit Chat are end‑to‑end encrypted. Only you and the recipient can read them.', icon: 'lock-closed-outline' },
   { id: '3', question: 'How do I create a department group?', answer: 'Tap "New Group" from the main menu (⋮) and select a department. Add members and tap "Create".', icon: 'people-outline' },
@@ -54,9 +52,23 @@ const FAQ_DATA = [
   { id: '8', question: 'How do I get technical support for telemetry?', answer: 'For telemetry support, contact the Operations team via the "Telemetry Monitoring" chat or email support@orbit-chat.com.', icon: 'radio-outline' },
 ];
 
+const FAQ_DATA_AM = [
+  { id: '1', question: 'አዲስ ውይይት እንዴት እጀምራለሁ?', answer: 'በታችኛው መላኪያ ላይ የሚገኘውን "አዲስ ውይይት" ቁልፍ ይጫኑ ወይም በወጎች ዝርዝር ላይ 💬 ምልክቱን ይጫኑ።', icon: 'chatbubble-outline' },
+  { id: '2', question: 'መልእክቶቼ ሚስጥራዊነታቸው የተጠበቀ ነው?', answer: 'አዎ፣ በኦርቢት ቻት ውስጥ ያሉ ሁሉም መልእክቶች መጨረሻ እስከ መጨረሻ በምስጢር የተጠበቁ ናቸው።', icon: 'lock-closed-outline' },
+  { id: '3', question: 'የክፍል ቡድን እንዴት እፈጥራለሁ?', answer: 'ከዋናው ሜኑ (⋮) "አዲስ ቡድን" የሚለውን ይምረጡና ክፍሉን ይምረጡ። አባላትን አክለው "ፍጠር" የሚለውን ይጫኑ።', icon: 'people-outline' },
+  { id: '4', question: 'SSGI ምንድን ነው?', answer: 'የህዋ ሳይንስና ጂኦስፓሻል ኢንስቲትዩት (SSGI) በኢትዮጵያ ውስጥ ለህዋ ሳይንስና ጂኦስፓሻል ምርምር የተቋቋመ ተቋም ነው።', icon: 'business-outline' },
+  { id: '5', question: 'የሳተላይት መረጃዎችን እንዴት ማግኘት እችላለሁ?', answer: 'ከዋናው ሜኑ (⋮) "የሳተላይት መረጃ" የሚለውን አማራጭ በመጠቀም ማግኘት ይቻላል።', icon: 'satellite-outline' },
+  { id: '6', question: 'የ SSGI የስልጠና ፕሮግራሞችን እንዴት መቀላቀል እችላለሁ?', answer: 'የስልጠና ፕሮግራሞች በ"ማስታወቂያዎች" ቻናል በኩል ይገለጻሉ።', icon: 'school-outline' },
+  { id: '7', question: 'የጂኦስፓሻል ችግርን እንዴት ሪፖርት አደርጋለሁ?', answer: 'በዚህ ገጽ ላይ "ችግር ሪፖርት አድርግ" የሚለውን በመጫን ሪፖርት ማድረግ ይችላሉ።', icon: 'map-outline' },
+  { id: '8', question: 'ለቴሌሜትሪ ቴክኒካዊ ድጋፍ እንዴት ማግኘት እችላለሁ?', answer: 'የኦፕሬሽንስ ቡድኑን በ"ቴሌሜትሪ ክትትል" ቻት ወይም በ support@orbit-chat.com ያግኙ።', icon: 'radio-outline' },
+];
+
 export default function HelpFAQScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t, i18n } = useTranslation();
   const isDark = theme === 'dark';
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
+
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -69,7 +81,9 @@ export default function HelpFAQScreen({ navigation }) {
   const accentColor = colors.tabActiveBg;
   const goldAccent = '#de994a';
 
-  const filteredFAQs = FAQ_DATA.filter(item =>
+  const faqData = isAmharic ? FAQ_DATA_AM : FAQ_DATA_EN;
+
+  const filteredFAQs = faqData.filter(item =>
     item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.answer.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -82,7 +96,7 @@ export default function HelpFAQScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Help & FAQ</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.help')}</T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -91,7 +105,7 @@ export default function HelpFAQScreen({ navigation }) {
           <Icon name="search-outline" size={20} color={secondaryText} />
           <TextInput
             style={[styles.searchInput, { color: textColor }]}
-            placeholder="Search FAQs..."
+            placeholder={isAmharic ? 'ጥያቄዎችን ይፈልጉ...' : 'Search FAQs...'}
             placeholderTextColor={secondaryText}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -105,9 +119,9 @@ export default function HelpFAQScreen({ navigation }) {
 
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="help-circle-outline" size={28} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
-            Find answers to common questions or get in touch with our support team.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
+            {isAmharic ? 'ለተለመዱ ጥያቄዎች መልስ ያግኙ ወይም ድጋፍ ሰጪ ቡድናችንን ያግኙ።' : 'Find answers to common questions or get in touch with our support team.'}
+          </T>
         </View>
 
         <View style={styles.faqContainer}>
@@ -123,12 +137,12 @@ export default function HelpFAQScreen({ navigation }) {
                 <View style={styles.faqHeader}>
                   <View style={styles.faqTitle}>
                     <Icon name={item.icon} size={20} color={accentColor} />
-                    <Text style={[styles.faqQuestion, { color: textColor, marginLeft: 10 }]}>{item.question}</Text>
+                    <T style={[styles.faqQuestion, { color: textColor, marginLeft: 10 }]}>{item.question}</T>
                   </View>
                   <Icon name={isExpanded ? 'chevron-up-outline' : 'chevron-down-outline'} size={20} color={secondaryText} />
                 </View>
                 {isExpanded && (
-                  <Text style={[styles.faqAnswer, { color: secondaryText }]}>{item.answer}</Text>
+                  <T style={[styles.faqAnswer, { color: secondaryText }]}>{item.answer}</T>
                 )}
               </TouchableOpacity>
             );
@@ -136,15 +150,15 @@ export default function HelpFAQScreen({ navigation }) {
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Quick Actions</Text>
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{isAmharic ? 'ፈጣን እርምጃዎች' : 'Quick Actions'}</T>
           <TouchableOpacity style={[styles.row, { borderBottomColor: borderColor }]} onPress={() => Alert.alert('Action', 'Feature coming soon!')}>
             <Icon name="bug-outline" size={20} color={brandColor} />
-            <Text style={[styles.rowText, { color: textColor, marginLeft: 12 }]}>Report Issue</Text>
+            <T style={[styles.rowText, { color: textColor, marginLeft: 12 }]}>{isAmharic ? 'ችግር ሪፖርት ያድርጉ' : 'Report Issue'}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row, { borderBottomColor: borderColor }]} onPress={() => Alert.alert('Action', 'Feature coming soon!')}>
             <Icon name="chatbubble-outline" size={20} color={goldAccent} />
-            <Text style={[styles.rowText, { color: textColor, marginLeft: 12 }]}>Send Feedback</Text>
+            <T style={[styles.rowText, { color: textColor, marginLeft: 12 }]}>{isAmharic ? 'አስተያየት ይላኩ' : 'Send Feedback'}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
         </View>

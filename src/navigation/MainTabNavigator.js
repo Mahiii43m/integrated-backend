@@ -1,9 +1,11 @@
-﻿import React from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../firebase/context/ThemeContext';
 import { useAuth } from '../firebase/context/AuthContext';
+import { useTranslation } from '../i18n';
+import T from '../components/T';
 import ChatsListScreen from '../screens/home/ChatListScreen';
 import ContactsScreen from '../screens/home/homescreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
@@ -29,9 +31,9 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 export default function MainTabNavigator() {
   const { colors } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
-  const initial =
-    (user?.fullName || user?.name || user?.email || 'U').charAt(0).toUpperCase();
+  const initial = (user?.fullName || user?.name || user?.email || 'U').charAt(0).toUpperCase();
 
   return (
     <Tab.Navigator
@@ -41,20 +43,30 @@ export default function MainTabNavigator() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: '#999',
         tabBarStyle: {
+          position: 'absolute',
+          bottom: 16,
+          left: 16,
+          right: 16,
           backgroundColor: colors.background,
-          borderTopWidth: 1,
-          borderTopColor: colors.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          borderRadius: 28,
+          borderTopWidth: 0,
+          height: 68,
+          paddingBottom: 4,
+          paddingTop: 6,
+          elevation: 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 12,
         },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
+        tabBarLabelStyle: { fontSize: 11 },
       }}
     >
       <Tab.Screen
         name="Chats"
         component={ChatsListScreen}
         options={{
+          tabBarLabel: ({ color }) => <T style={{ color, fontSize: 11 }}>{t('tabs.chats')}</T>,
           tabBarIcon: ({ color, size }) => (
             <Icon name="chatbubble-ellipses-outline" size={size} color={color} />
           ),
@@ -64,6 +76,7 @@ export default function MainTabNavigator() {
         name="Contacts"
         component={ContactsScreen}
         options={{
+          tabBarLabel: ({ color }) => <T style={{ color, fontSize: 11 }}>{t('tabs.contacts')}</T>,
           tabBarIcon: ({ color, size }) => (
             <Icon name="people-outline" size={size} color={color} />
           ),
@@ -73,6 +86,7 @@ export default function MainTabNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
+          tabBarLabel: ({ color }) => <T style={{ color, fontSize: 11 }}>{t('tabs.settings')}</T>,
           tabBarIcon: ({ color, size }) => (
             <Icon name="settings-outline" size={size} color={color} />
           ),
@@ -82,6 +96,7 @@ export default function MainTabNavigator() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          tabBarLabel: ({ color }) => <T style={{ color, fontSize: 11 }}>{t('tabs.profile')}</T>,
           tabBarIcon: ({ color, size, focused }) =>
             user?.profilePicture ? (
               <View
@@ -112,13 +127,7 @@ export default function MainTabNavigator() {
                   alignItems: 'center',
                 }}
               >
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: size * 0.55,
-                    fontWeight: 'bold',
-                  }}
-                >
+                <Text style={{ color: '#fff', fontSize: size * 0.55, fontWeight: 'bold' }}>
                   {initial}
                 </Text>
               </View>
