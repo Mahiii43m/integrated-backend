@@ -14,9 +14,10 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const STORAGE_KEY = 'notification_preferences';
-const DIVISIONS = ['Space Science', 'Geospatial', 'Research', 'Operations'];
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -25,14 +26,8 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'chatbubble-outline') path = 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.1c1.5 0 3 .4 4.3 1.1L21 1.5l-1.1 4.2c.7 1.3 1.1 2.8 1.1 4.3z';
   if (name === 'people-outline') path = 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0-4-4 4 4 0 0 0 4 4z';
   if (name === 'megaphone-outline') path = 'M11 5L6 9H2v6h4l5 4V5z M19.07 4.93a10 10 0 0 1 0 14.14 M15.54 8.46a5 5 0 0 1 0 7.07';
-  if (name === 'alert-circle-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 8v4 M12 16h.01';
-  if (name === 'calendar-outline') path = 'M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z M16 2v4 M8 2v4 M3 10h18';
-  if (name === 'radio-button-on-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z';
   if (name === 'musical-note-outline') path = 'M9 18V5l12-2v13 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z';
   if (name === 'phone-portrait-outline') path = 'M5 4h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M12 18h.01';
-  if (name === 'time-outline') path = 'M12 8v4l3 3 M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z';
-  if (name === 'moon-outline') path = 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z';
-  if (name === 'eye-outline') path = 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -43,6 +38,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function NotificationsSettingsScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [preferences, setPreferences] = useState({
     pushEnabled: true,
@@ -60,7 +56,6 @@ export default function NotificationsSettingsScreen({ navigation }) {
   const borderColor = colors.border;
   const cardColor = colors.rowBg;
   const brandColor = colors.primary;
-  const accentColor = colors.tabActiveBg;
   const goldAccent = '#de994a';
 
   useEffect(() => {
@@ -79,7 +74,7 @@ export default function NotificationsSettingsScreen({ navigation }) {
     <View style={[styles.toggleRow, { borderBottomColor: borderColor }]}>
       <View style={styles.toggleLabel}>
         <Icon name={icon} size={20} color={secondaryText} />
-        <Text style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{label}</Text>
+        <T style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{label}</T>
       </View>
       <Switch
         value={preferences[key] ?? false}
@@ -99,34 +94,34 @@ export default function NotificationsSettingsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Notifications</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.notifications')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="notifications-outline" size={28} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
-            Manage how and when you receive notifications. Changes are saved automatically.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
+            {t('notificationsSettings.info')}
+          </T>
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>General</Text>
-          {renderToggleRow('Push Notifications', 'pushEnabled', 'notifications-outline')}
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('notificationsSettings.general')}</T>
+          {renderToggleRow(t('notificationsSettings.pushNotifications'), 'pushEnabled', 'notifications-outline')}
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Notification Types</Text>
-          {renderToggleRow('Messages', 'messageNotifications', 'chatbubble-outline')}
-          {renderToggleRow('Groups & Departments', 'groupNotifications', 'people-outline')}
-          {renderToggleRow('SSGI Announcements', 'announcementNotifications', 'megaphone-outline')}
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('notificationsSettings.types')}</T>
+          {renderToggleRow(t('notificationsSettings.messages'), 'messageNotifications', 'chatbubble-outline')}
+          {renderToggleRow(t('notificationsSettings.groupsAndDepartments'), 'groupNotifications', 'people-outline')}
+          {renderToggleRow(t('notificationsSettings.ssgiAnnouncements'), 'announcementNotifications', 'megaphone-outline')}
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Sound & Vibration</Text>
-          {renderToggleRow('Sound', 'sound', 'musical-note-outline')}
-          {renderToggleRow('Vibrate', 'vibrate', 'phone-portrait-outline')}
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('notificationsSettings.soundAndVibration')}</T>
+          {renderToggleRow(t('notificationsSettings.sound'), 'sound', 'musical-note-outline')}
+          {renderToggleRow(t('notificationsSettings.vibrate'), 'vibrate', 'phone-portrait-outline')}
         </View>
       </ScrollView>
     </SafeAreaView>

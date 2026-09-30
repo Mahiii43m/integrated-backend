@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme, THEME_PRESETS } from '../../firebase/context/ThemeContext';
-import { SPACING, RADIUS } from '../../constants/Typography';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const ACCENT_COLORS = ['#de994a', '#f0c040', '#fd79a8', '#00b894', '#0984e3', '#6c5ce7'];
 
@@ -44,6 +45,7 @@ export default function ThemeScreen({ navigation }) {
     setThemePreset,
     setCustomAccent,
   } = useTheme();
+  const { t } = useTranslation();
 
   const bgColor = colors.background;
   const textColor = colors.text;
@@ -51,7 +53,6 @@ export default function ThemeScreen({ navigation }) {
   const borderColor = colors.border;
   const cardColor = colors.rowBg;
   const brandColor = colors.primary;
-  const accent = colors.tabActiveBg;
 
   const presets = THEME_PRESETS ? Object.entries(THEME_PRESETS) : [];
 
@@ -71,23 +72,23 @@ export default function ThemeScreen({ navigation }) {
 
   const PreviewCard = () => (
     <View style={[styles.previewCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-      <Text style={[styles.previewTitle, { color: textColor }]}>Live Preview</Text>
+      <T style={[styles.previewTitle, { color: textColor }]}>{t('theme.livePreview')}</T>
       <View style={[styles.previewChat, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#f0f0f5' }]}>
         <View style={[styles.previewBubble, styles.previewBubbleSent, { backgroundColor: brandColor }]}>
-          <Text style={[styles.previewBubbleText, { color: '#ffffff' }]}>Hello!</Text>
+          <T style={[styles.previewBubbleText, { color: '#ffffff' }]}>{t('theme.hello')}</T>
         </View>
         <View style={[styles.previewBubble, styles.previewBubbleReceived, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : '#ffffff' }]}>
-          <Text style={[styles.previewBubbleText, { color: textColor }]}>Hi there!</Text>
+          <T style={[styles.previewBubbleText, { color: textColor }]}>{t('theme.hiThere')}</T>
         </View>
       </View>
       <View style={styles.previewMeta}>
-        <Text style={[styles.previewMetaText, { color: secondaryText }]}>
-          {isDark ? '🌙 Dark' : '☀️ Light'} • {THEME_PRESETS && THEME_PRESETS[preset]?.name || 'SSGI Blue'}
-        </Text>
+        <T style={[styles.previewMetaText, { color: secondaryText }]}>
+          {isDark ? `🌙 ${t('theme.dark')}` : `☀️ ${t('theme.light')}`} • {THEME_PRESETS && THEME_PRESETS[preset]?.name || 'SSGI Blue'}
+        </T>
         {accentColor && (
-          <Text style={[styles.previewMetaText, { color: secondaryText }]}>
-            Accent: {accentColor.toUpperCase()}
-          </Text>
+          <T style={[styles.previewMetaText, { color: secondaryText }]}>
+            {t('theme.accent')}: {accentColor.toUpperCase()}
+          </T>
         )}
       </View>
     </View>
@@ -101,7 +102,7 @@ export default function ThemeScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Theme</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.theme')}</T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -109,7 +110,7 @@ export default function ThemeScreen({ navigation }) {
         <PreviewCard />
 
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: secondaryText }]}>Mode</Text>
+          <T style={[styles.sectionLabel, { color: secondaryText }]}>{t('theme.mode')}</T>
           <View style={styles.modeOptions}>
             {['light', 'dark', 'system'].map((mode) => (
               <TouchableOpacity
@@ -127,14 +128,14 @@ export default function ThemeScreen({ navigation }) {
                   size={18}
                   color={themeMode === mode ? '#ffffff' : secondaryText}
                 />
-                <Text
+                <T
                   style={[
                     styles.modeChipText,
                     { color: themeMode === mode ? '#ffffff' : secondaryText, marginLeft: 6 },
                   ]}
                 >
-                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
-                </Text>
+                  {t(`theme.${mode}`)}
+                </T>
               </TouchableOpacity>
             ))}
           </View>
@@ -142,7 +143,7 @@ export default function ThemeScreen({ navigation }) {
 
         {presets.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionLabel, { color: secondaryText }]}>Theme Presets</Text>
+            <T style={[styles.sectionLabel, { color: secondaryText }]}>{t('theme.presets')}</T>
             <View style={styles.presetGrid}>
               {presets.map(([key, p]) => (
                 <TouchableOpacity
@@ -157,7 +158,7 @@ export default function ThemeScreen({ navigation }) {
                 >
                   <View style={[styles.presetHeader, { backgroundColor: p.primary }]} />
                   <View style={styles.presetBody}>
-                    <Text style={[styles.presetName, { color: textColor }]}>{p.name}</Text>
+                    <T style={[styles.presetName, { color: textColor }]}>{p.name}</T>
                     {preset === key && (
                       <View style={[styles.presetCheck, { backgroundColor: brandColor }]}>
                         <Icon name="checkmark" size={12} color="#ffffff" />
@@ -172,10 +173,10 @@ export default function ThemeScreen({ navigation }) {
 
         <View style={styles.section}>
           <View style={styles.accentHeader}>
-            <Text style={[styles.sectionLabel, { color: secondaryText }]}>Accent Color</Text>
+            <T style={[styles.sectionLabel, { color: secondaryText }]}>{t('settings.accentColor')}</T>
             {accentColor && (
               <TouchableOpacity onPress={resetAccent} style={styles.resetAccentBtn}>
-                <Text style={[styles.resetAccentText, { color: brandColor }]}>Reset</Text>
+                <T style={[styles.resetAccentText, { color: brandColor }]}>{t('theme.reset')}</T>
               </TouchableOpacity>
             )}
           </View>
@@ -201,9 +202,9 @@ export default function ThemeScreen({ navigation }) {
 
         <View style={styles.noteContainer}>
           <Icon name="information-circle-outline" size={18} color={secondaryText} />
-          <Text style={[styles.noteText, { color: secondaryText, marginLeft: 8 }]}>
-            Changes are saved automatically.
-          </Text>
+          <T style={[styles.noteText, { color: secondaryText, marginLeft: 8 }]}>
+            {t('theme.autoSaved')}
+          </T>
         </View>
       </ScrollView>
     </SafeAreaView>

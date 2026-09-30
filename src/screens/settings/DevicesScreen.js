@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -38,6 +40,7 @@ const MOCK_DEVICES = [
 
 export default function DevicesScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [devices, setDevices] = useState(MOCK_DEVICES);
 
@@ -51,16 +54,16 @@ export default function DevicesScreen({ navigation }) {
   const goldAccent = '#de994a';
 
   const handleRevoke = (deviceId) => {
-    Alert.alert('Revoke Session', 'Are you sure you want to revoke this session?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Revoke', style: 'destructive', onPress: () => setDevices(prev => prev.filter(d => d.id !== deviceId)) },
+    Alert.alert(t('devices.revoke'), 'Are you sure you want to revoke this session?', [
+      { text: t('chats.cancel'), style: 'cancel' },
+      { text: t('devices.revoke'), style: 'destructive', onPress: () => setDevices(prev => prev.filter(d => d.id !== deviceId)) },
     ]);
   };
 
   const handleLogoutAll = () => {
-    Alert.alert('Log Out All', 'This will log you out of all devices except this one.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log Out All', style: 'destructive', onPress: () => setDevices(prev => prev.filter(d => d.isCurrent)) },
+    Alert.alert(t('devices.logoutAll'), 'This will log you out of all devices except this one.', [
+      { text: t('chats.cancel'), style: 'cancel' },
+      { text: t('devices.logoutAll'), style: 'destructive', onPress: () => setDevices(prev => prev.filter(d => d.isCurrent)) },
     ]);
   };
 
@@ -72,20 +75,20 @@ export default function DevicesScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Devices</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.devices')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="devices-outline" size={18} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
-            Manage your active sessions. Revoke any device you don't recognize.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
+            {t('devices.info')}
+          </T>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Active Devices</Text>
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('devices.activeDevices')}</T>
           {devices.map((device) => (
             <View key={device.id} style={[styles.deviceItem, { borderBottomColor: borderColor }]}>
               <View style={styles.deviceLeft}>
@@ -97,19 +100,19 @@ export default function DevicesScreen({ navigation }) {
                   />
                 </View>
                 <View style={styles.deviceInfo}>
-                  <Text style={[styles.deviceName, { color: textColor }]}>{device.name}</Text>
-                  <Text style={[styles.deviceLocation, { color: secondaryText }]}>{device.location}</Text>
-                  <Text style={[styles.deviceLastActive, { color: secondaryText }]}>Last active: {device.lastActive}</Text>
+                  <T style={[styles.deviceName, { color: textColor }]}>{device.name}</T>
+                  <T style={[styles.deviceLocation, { color: secondaryText }]}>{device.location}</T>
+                  <T style={[styles.deviceLastActive, { color: secondaryText }]}>{t('devices.lastActive')} {device.lastActive}</T>
                 </View>
               </View>
               <View style={styles.deviceRight}>
                 {device.isCurrent ? (
                   <View style={[styles.currentBadge, { backgroundColor: brandColor }]}>
-                    <Text style={styles.currentBadgeText}>Current</Text>
+                    <T style={styles.currentBadgeText}>{t('devices.current')}</T>
                   </View>
                 ) : (
                   <TouchableOpacity style={[styles.revokeBtn, { borderColor: borderColor }]} onPress={() => handleRevoke(device.id)}>
-                    <Text style={[styles.revokeText, { color: accentColor }]}>Revoke</Text>
+                    <T style={[styles.revokeText, { color: accentColor }]}>{t('devices.revoke')}</T>
                   </TouchableOpacity>
                 )}
               </View>
@@ -119,7 +122,7 @@ export default function DevicesScreen({ navigation }) {
 
         <TouchableOpacity style={[styles.logoutAllBtn, { borderColor: borderColor }]} onPress={handleLogoutAll}>
           <Icon name="log-out-outline" size={18} color="#c0392b" />
-          <Text style={[styles.logoutAllText, { color: '#c0392b', marginLeft: 8 }]}>Log Out All Devices</Text>
+          <T style={[styles.logoutAllText, { color: '#c0392b', marginLeft: 8 }]}>{t('devices.logoutAll')}</T>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

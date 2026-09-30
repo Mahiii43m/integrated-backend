@@ -10,14 +10,13 @@ import {
   ScrollView,
   Switch,
   Alert,
-  Modal,
-  Dimensions,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
-const { width } = Dimensions.get('window');
 const STORAGE_KEY = 'backup_settings';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
@@ -29,10 +28,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'trash-outline') path = 'M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2';
   if (name === 'videocam-outline') path = 'M23 7l-7 5 7 5V7z M1 5h13a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H1a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z';
   if (name === 'musical-notes-outline') path = 'M9 18V5l12-2v13 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z';
-  if (name === 'calendar-outline') path = 'M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z M16 2v4 M8 2v4 M3 10h18';
-  if (name === 'chevron-forward-outline') path = 'M9 5l7 7-7 7';
   if (name === 'cloud-upload-outline') path = 'M16 16l-4-4-4 4 M12 12v9 M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3';
-  if (name === 'checkmark-circle') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M9 12l2 2 4-4';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -43,6 +39,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function BackupStorageScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [settings, setSettings] = useState({
     autoDownloadImages: true,
@@ -52,7 +49,6 @@ export default function BackupStorageScreen({ navigation }) {
     lastBackup: 'Yesterday, 10:30 AM',
   });
   const [storageUsage, setStorageUsage] = useState({ chats: 12.5, media: 45.8, cache: 8.2, total: 66.5 });
-  const [frequencyModalVisible, setFrequencyModalVisible] = useState(false);
 
   const bgColor = colors.background;
   const textColor = colors.text;
@@ -80,8 +76,8 @@ export default function BackupStorageScreen({ navigation }) {
       <View style={styles.toggleLabel}>
         <Icon name={icon} size={18} color={accentColor} />
         <View style={{ marginLeft: 12, flex: 1 }}>
-          <Text style={[styles.toggleText, { color: textColor }]}>{label}</Text>
-          {description && <Text style={[styles.toggleDescription, { color: secondaryText }]}>{description}</Text>}
+          <T style={[styles.toggleText, { color: textColor }]}>{label}</T>
+          {description && <T style={[styles.toggleDescription, { color: secondaryText }]}>{description}</T>}
         </View>
       </View>
       <Switch
@@ -102,55 +98,55 @@ export default function BackupStorageScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Backup & Storage</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.backup')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="cloud-outline" size={18} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
-            Manage your data, backups, and storage usage.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
+            {t('backup.info')}
+          </T>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <View style={styles.cardHeader}>
-            <Text style={[styles.cardTitle, { color: secondaryText }]}>Storage Usage</Text>
-            <Text style={[styles.storageTotal, { color: textColor }]}>{storageUsage.total.toFixed(1)} MB</Text>
+            <T style={[styles.cardTitle, { color: secondaryText }]}>{t('backup.storageUsage')}</T>
+            <T style={[styles.storageTotal, { color: textColor }]}>{storageUsage.total.toFixed(1)} MB</T>
           </View>
           <View style={styles.storageItem}>
             <Icon name="chatbubbles-outline" size={16} color={brandColor} />
-            <Text style={[styles.storageLabel, { color: textColor, marginLeft: 8 }]}>Chats</Text>
-            <Text style={[styles.storageValue, { color: secondaryText, marginLeft: 'auto' }]}>{storageUsage.chats} MB</Text>
+            <T style={[styles.storageLabel, { color: textColor, marginLeft: 8 }]}>{t('backup.chats')}</T>
+            <T style={[styles.storageValue, { color: secondaryText, marginLeft: 'auto' }]}>{storageUsage.chats} MB</T>
           </View>
           <View style={styles.storageItem}>
             <Icon name="image-outline" size={16} color={accentColor} />
-            <Text style={[styles.storageLabel, { color: textColor, marginLeft: 8 }]}>Media</Text>
-            <Text style={[styles.storageValue, { color: secondaryText, marginLeft: 'auto' }]}>{storageUsage.media} MB</Text>
+            <T style={[styles.storageLabel, { color: textColor, marginLeft: 8 }]}>{t('backup.media')}</T>
+            <T style={[styles.storageValue, { color: secondaryText, marginLeft: 'auto' }]}>{storageUsage.media} MB</T>
           </View>
 
-          <TouchableOpacity style={[styles.clearCacheBtn, { borderColor: borderColor }]} onPress={() => Alert.alert('Clear Cache', 'Cache cleared!')}>
+          <TouchableOpacity style={[styles.clearCacheBtn, { borderColor: borderColor }]} onPress={() => Alert.alert(t('backup.clearCache'), 'Cache cleared!')}>
             <Icon name="trash-outline" size={16} color="#c0392b" />
-            <Text style={[styles.clearCacheText, { color: '#c0392b', marginLeft: 6 }]}>Clear Cache</Text>
+            <T style={[styles.clearCacheText, { color: '#c0392b', marginLeft: 6 }]}>{t('backup.clearCache')}</T>
           </TouchableOpacity>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Auto-Download</Text>
-          {renderToggleRow('Images', 'autoDownloadImages', 'image-outline', 'Download images automatically')}
-          {renderToggleRow('Videos', 'autoDownloadVideos', 'videocam-outline', 'Download videos automatically')}
-          {renderToggleRow('Audio', 'autoDownloadAudio', 'musical-notes-outline', 'Download audio files automatically')}
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('backup.autoDownload')}</T>
+          {renderToggleRow(t('backup.images'), 'autoDownloadImages', 'image-outline')}
+          {renderToggleRow(t('backup.videos'), 'autoDownloadVideos', 'videocam-outline')}
+          {renderToggleRow(t('backup.audio'), 'autoDownloadAudio', 'musical-notes-outline')}
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <View style={styles.cardHeader}>
-            <Text style={[styles.cardTitle, { color: secondaryText }]}>Backup</Text>
-            <Text style={[styles.lastBackupText, { color: secondaryText }]}>Last: {settings.lastBackup}</Text>
+            <T style={[styles.cardTitle, { color: secondaryText }]}>{t('backup.backup')}</T>
+            <T style={[styles.lastBackupText, { color: secondaryText }]}>{t('backup.last')} {settings.lastBackup}</T>
           </View>
-          <TouchableOpacity style={[styles.backupNowBtn, { backgroundColor: brandColor }]} onPress={() => Alert.alert('Backup', 'Backup started!')}>
+          <TouchableOpacity style={[styles.backupNowBtn, { backgroundColor: brandColor }]} onPress={() => Alert.alert(t('backup.backup'), 'Backup started!')}>
             <Icon name="cloud-upload-outline" size={18} color="#ffffff" />
-            <Text style={[styles.backupNowText, { marginLeft: 8 }]}>Backup Now</Text>
+            <T style={[styles.backupNowText, { marginLeft: 8 }]}>{t('backup.backupNow')}</T>
           </TouchableOpacity>
         </View>
       </ScrollView>

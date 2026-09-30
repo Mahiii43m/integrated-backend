@@ -10,7 +10,6 @@ import {
   Alert,
   Linking,
   Switch,
-  Text,
   ActivityIndicator,
   Modal,
   TextInput,
@@ -18,18 +17,17 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../i18n';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import T from '../../components/T';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-// Simple constants since the original files are missing
 const SPACING = { xs: 4, sm: 8, base: 16, md: 20, lg: 24, xl: 32, '2xl': 40 };
 const RADIUS = { sm: 4, md: 8, lg: 16, xl: 24 };
 
 const PROFILE_IMAGE = require('../../../assets/icon.png');
 
-// Simple Icon component using SVG paths for common icons
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
   if (name === 'chevron-back-outline') path = 'M15 19l-7-7 7-7';
@@ -54,9 +52,10 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function ProfileScreen({ navigation }) {
   const { user, logout, updateProfilePicture } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors, theme } = useTheme();
   const isDark = theme === 'dark';
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
 
   const [imageUri, setImageUri] = useState(user?.profilePicture || null);
   const [uploading, setUploading] = useState(false);
@@ -86,12 +85,12 @@ export default function ProfileScreen({ navigation }) {
   const goldAccent = '#de994a';
 
   const showImagePickerOptions = () => {
-    Alert.alert('Profile Picture', 'Image selection feature coming soon!');
+    Alert.alert(t('account.tapToChangePhoto'), t('profile.featureComingSoon'));
   };
 
   const handleUpdateProfile = async () => {
     if (!newName.trim()) {
-      Alert.alert('Error', 'Please enter a name.');
+      Alert.alert('Error', isAmharic ? 'እባክዎን ስም ያስገቡ።' : 'Please enter a name.');
       return;
     }
     setUpdating(true);
@@ -100,10 +99,10 @@ export default function ProfileScreen({ navigation }) {
         fullName: newName.trim(),
       });
       setEditModalVisible(false);
-      Alert.alert('Success', 'Profile updated successfully.');
+      Alert.alert('Success', isAmharic ? 'መገለጫው በተሳካ ሁኔታ ተዘምኗል።' : 'Profile updated successfully.');
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to update profile.');
+      Alert.alert('Error', isAmharic ? 'መገለጫውን ማዘመን አልተቻለም።' : 'Failed to update profile.');
     } finally {
       setUpdating(false);
     }
@@ -111,11 +110,11 @@ export default function ProfileScreen({ navigation }) {
 
   const handleChangePassword = async () => {
     if (newPassword.length < 12) {
-      Alert.alert('Error', 'Password must be at least 12 characters.');
+      Alert.alert('Error', isAmharic ? 'የይለፍ ቃል ቢያንስ 12 ቁምፊዎች መሆን አለበት።' : 'Password must be at least 12 characters.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Alert.alert('Error', isAmharic ? 'የይለፍ ቃላት አይዛመዱም።' : 'Passwords do not match.');
       return;
     }
     setChangingPassword(true);
@@ -124,11 +123,11 @@ export default function ProfileScreen({ navigation }) {
       setPasswordModalVisible(false);
       setNewPassword('');
       setConfirmPassword('');
-      Alert.alert('Success', 'Password changed successfully.');
+      Alert.alert('Success', isAmharic ? 'የይለፍ ቃል በተሳካ ሁኔታ ተቀይሯል።' : 'Password changed successfully.');
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/requires-recent-login') {
-        Alert.alert('Action Required', 'This action requires a recent login. Please log out and log back in to change your password.');
+        Alert.alert('Action Required', isAmharic ? 'እባክዎን ወጥተው እንደገና ይግቡ።' : 'This action requires a recent login. Please log out and log back in to change your password.');
       } else {
         Alert.alert('Error', error.message || 'Failed to change password.');
       }
@@ -139,11 +138,11 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('chats.signOut'),
+      t('chats.signOutConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: logout },
+        { text: t('chats.cancel'), style: 'cancel' },
+        { text: t('chats.signOut'), style: 'destructive', onPress: logout },
       ]
     );
   };
@@ -160,7 +159,7 @@ export default function ProfileScreen({ navigation }) {
 
   const renderToggleItem = (label, key) => (
     <View style={styles.toggleRow}>
-      <Text style={[styles.bodyText, { color: textColor }]}>{label}</Text>
+      <T style={[styles.bodyText, { color: textColor }]}>{label}</T>
       <Switch
         value={notifications[key]}
         onValueChange={() => toggleNotification(key)}
@@ -180,9 +179,9 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>
-          Profile
-        </Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>
+          {t('tabs.profile')}
+        </T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -211,43 +210,43 @@ export default function ProfileScreen({ navigation }) {
         {uploading && (
           <View style={styles.uploadingRow}>
             <ActivityIndicator size="small" color={brandColor} />
-            <Text style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
-              Saving...
-            </Text>
+            <T style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
+              {t('account.saving')}
+            </T>
           </View>
         )}
 
         {/* User Info */}
         <View style={styles.userInfo}>
-          <Text style={[styles.heading2, { color: textColor }]}>
+          <T style={[styles.heading2, { color: textColor }]}>
             {user?.fullName || user?.name || 'Orbit User'}
-          </Text>
-          <Text style={[styles.bodyText, { color: secondaryText }]}>
+          </T>
+          <T style={[styles.bodyText, { color: secondaryText }]}>
             {user?.email || 'orbiting@chat.com'}
-          </Text>
+          </T>
 
           <View style={styles.detailRow}>
             <Icon name="flask-outline" size={16} color={accentColor} />
-            <Text style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
-              Research Area: Space Weather & Geospatial Analysis
-            </Text>
+            <T style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
+              {t('profile.researchArea')}: {isAmharic ? 'የጠፈር አየር ሁኔታ እና ጂኦስፓሻል ትንተና' : 'Space Weather & Geospatial Analysis'}
+            </T>
           </View>
           <View style={styles.detailRow}>
             <Icon name="calendar-outline" size={16} color={accentColor} />
-            <Text style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
-              Member since 2025
-            </Text>
+            <T style={[styles.caption, { color: secondaryText, marginLeft: SPACING.xs }]}>
+              {t('profile.memberSince')} 2025
+            </T>
           </View>
 
           <View style={styles.badgeContainer}>
             <View style={[styles.badge, { backgroundColor: accentColor + '20' }]}>
-              <Text style={{ fontSize: 12, color: accentColor }}>{t('profile.ssgiStaff')}</Text>
+              <T style={{ fontSize: 12, color: accentColor }}>{t('profile.ssgiStaff')}</T>
             </View>
             <View style={[styles.badge, { backgroundColor: brandColor + '20' }]}>
-              <Text style={{ fontSize: 12, color: brandColor }}>Geospatial Division</Text>
+              <T style={{ fontSize: 12, color: brandColor }}>{isAmharic ? 'ጂኦስፓሻል ዘርፍ' : 'Geospatial Division'}</T>
             </View>
             <View style={[styles.badge, { backgroundColor: goldAccent + '20' }]}>
-              <Text style={{ fontSize: 12, color: goldAccent }}>{t('profile.spaceScience')}</Text>
+              <T style={{ fontSize: 12, color: goldAccent }}>{t('profile.spaceScience')}</T>
             </View>
           </View>
         </View>
@@ -256,77 +255,77 @@ export default function ProfileScreen({ navigation }) {
         <View style={[styles.organizationCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <View style={styles.orgHeader}>
             <Icon name="business-outline" size={22} color={goldAccent} />
-            <Text style={[styles.orgTitle, { color: textColor }]}>
+            <T style={[styles.orgTitle, { color: textColor }]}>
               {t('profile.instituteName')}
-            </Text>
+            </T>
           </View>
-          <Text style={[styles.orgDescription, { color: secondaryText }]}>
+          <T style={[styles.orgDescription, { color: secondaryText }]}>
             {t('profile.instituteDesc')}
-          </Text>
+          </T>
           <TouchableOpacity style={[styles.orgButton, { backgroundColor: brandColor }]} onPress={openSSGIWebsite}>
             <Icon name="globe-outline" size={18} color="#ffffff" />
-            <Text style={[styles.orgButtonText, { marginLeft: SPACING.sm }]}>
-              Visit SSGI Website
-            </Text>
+            <T style={[styles.orgButtonText, { marginLeft: SPACING.sm }]}>
+              {t('profile.visitWebsite')}
+            </T>
           </TouchableOpacity>
         </View>
 
         {/* Account Settings */}
         <View style={[styles.optionsCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionLabel, { color: secondaryText }]}>
-            ACCOUNT SETTINGS
-          </Text>
+          <T style={[styles.sectionLabel, { color: secondaryText }]}>
+            {t('profile.accountSettings')}
+          </T>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => setEditModalVisible(true)}>
             <Icon name="person-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.editProfile')}</Text>
+            <T style={[styles.optionText, { color: textColor }]}>{t('profile.editProfile')}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => setPasswordModalVisible(true)}>
             <Icon name="key-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.changePassword')}</Text>
+            <T style={[styles.optionText, { color: textColor }]}>{t('profile.changePassword')}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => Alert.alert(t('profile.myPublications'), t('profile.featureComingSoon'))}>
             <Icon name="document-text-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.myPublications')}</Text>
+            <T style={[styles.optionText, { color: textColor }]}>{t('profile.myPublications')}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => navigation.navigate('MainTabs', { screen: 'Chats' })}>
             <Icon name="people-outline" size={22} color={accentColor} />
-            <Text style={[styles.optionText, { color: textColor }]}>{t('profile.groupChats')}</Text>
+            <T style={[styles.optionText, { color: textColor }]}>{t('profile.groupChats')}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
         </View>
 
         {/* Notification Preferences */}
         <View style={[styles.optionsCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionLabel, { color: secondaryText }]}>
-            NOTIFICATION PREFERENCES
-          </Text>
+          <T style={[styles.sectionLabel, { color: secondaryText }]}>
+            {t('notifications.preferences')}
+          </T>
 
-          {renderToggleItem('SSGI Announcements', 'announcements')}
-          {renderToggleItem('Training & Workshops', 'training')}
-          {renderToggleItem('Research Publications', 'research')}
-          {renderToggleItem('Events & Conferences', 'events')}
+          {renderToggleItem(t('notifications.ssgiAnnouncements'), 'announcements')}
+          {renderToggleItem(t('notifications.training'), 'training')}
+          {renderToggleItem(t('notifications.research'), 'research')}
+          {renderToggleItem(t('notifications.events'), 'events')}
         </View>
 
         {/* Logout */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
           <Icon name="log-out-outline" size={20} color="#ffffff" />
-          <Text style={styles.logoutText}>Sign Out</Text>
+          <T style={styles.logoutText}>{t('chats.signOut')}</T>
         </TouchableOpacity>
 
         <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: secondaryText }]}>
+          <T style={[styles.footerText, { color: secondaryText }]}>
             Orbit Chat v1.0.0
-          </Text>
-          <Text style={[styles.footerSubtext, { color: secondaryText }]}>
-            Secure Communication for Space & Geospatial Teams
-          </Text>
+          </T>
+          <T style={[styles.footerSubtext, { color: secondaryText }]}>
+            {isAmharic ? 'ለህዋ እና ጂኦስፓሻል ቡድኖች ደህንነቱ የተጠበቀ ግንኙነት' : 'Secure Communication for Space & Geospatial Teams'}
+          </T>
         </View>
       </ScrollView>
 
@@ -334,20 +333,20 @@ export default function ProfileScreen({ navigation }) {
       <Modal visible={editModalVisible} transparent animationType="slide" onRequestClose={() => setEditModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>{t('profile.editProfile')}</Text>
+            <T style={[styles.modalTitle, { color: textColor }]}>{t('profile.editProfile')}</T>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: borderColor, backgroundColor: cardColor }]}
-              placeholder="Full Name"
+              placeholder={t('account.fullName')}
               placeholderTextColor={secondaryText}
               value={newName}
               onChangeText={setNewName}
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={[styles.modalBtn, { backgroundColor: '#cccccc' }]} onPress={() => setEditModalVisible(false)}>
-                <Text style={styles.modalBtnText}>Cancel</Text>
+                <T style={styles.modalBtnText}>{t('chats.cancel')}</T>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modalBtn, { backgroundColor: brandColor }]} onPress={handleUpdateProfile} disabled={updating}>
-                {updating ? <ActivityIndicator color="#fff" /> : <Text style={styles.modalBtnText}>Save</Text>}
+                {updating ? <ActivityIndicator color="#fff" /> : <T style={styles.modalBtnText}>{t('account.save')}</T>}
               </TouchableOpacity>
             </View>
           </View>
@@ -358,10 +357,10 @@ export default function ProfileScreen({ navigation }) {
       <Modal visible={passwordModalVisible} transparent animationType="slide" onRequestClose={() => setPasswordModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>{t('profile.changePassword')}</Text>
+            <T style={[styles.modalTitle, { color: textColor }]}>{t('profile.changePassword')}</T>
             <TextInput
               style={[styles.input, { color: textColor, borderColor: borderColor, backgroundColor: cardColor }]}
-              placeholder="New Password (min 12 chars)"
+              placeholder={t('auth.password')}
               placeholderTextColor={secondaryText}
               secureTextEntry
               value={newPassword}
@@ -369,7 +368,7 @@ export default function ProfileScreen({ navigation }) {
             />
             <TextInput
               style={[styles.input, { color: textColor, borderColor: borderColor, backgroundColor: cardColor, marginTop: 10 }]}
-              placeholder="Confirm Password"
+              placeholder={t('auth.confirmPassword')}
               placeholderTextColor={secondaryText}
               secureTextEntry
               value={confirmPassword}
@@ -377,10 +376,10 @@ export default function ProfileScreen({ navigation }) {
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={[styles.modalBtn, { backgroundColor: '#cccccc' }]} onPress={() => setPasswordModalVisible(false)}>
-                <Text style={styles.modalBtnText}>Cancel</Text>
+                <T style={styles.modalBtnText}>{t('chats.cancel')}</T>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modalBtn, { backgroundColor: brandColor }]} onPress={handleChangePassword} disabled={changingPassword}>
-                {changingPassword ? <ActivityIndicator color="#fff" /> : <Text style={styles.modalBtnText}>Update</Text>}
+                {changingPassword ? <ActivityIndicator color="#fff" /> : <T style={styles.modalBtnText}>{t('account.save')}</T>}
               </TouchableOpacity>
             </View>
           </View>

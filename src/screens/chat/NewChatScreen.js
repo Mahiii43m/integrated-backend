@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import Typography from '../../components/Typography';
 import { SPACING, RADIUS } from '../../constants/Typography';
 import firestore from '@react-native-firebase/firestore';
@@ -36,6 +38,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function NewChatScreen({ navigation, route }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,13 +148,13 @@ export default function NewChatScreen({ navigation, route }) {
       disabled={!!startingChatWith}
     >
       <View style={[styles.avatar, { backgroundColor: brandColor }]}>
-        <Typography variant="heading3" color="#ffffff">
+        <T style={{ fontSize: 18, fontWeight: 'bold', color: '#ffffff' }}>
           {(item.fullName || item.email || '?').charAt(0).toUpperCase()}
-        </Typography>
+        </T>
       </View>
       <View style={styles.userInfo}>
-        <Typography variant="body" color={textColor}>{item.fullName || 'Unnamed User'}</Typography>
-        <Typography variant="caption" color={secondaryText} style={styles.userEmail}>{item.email}</Typography>
+        <T style={{ fontSize: 16, color: textColor }}>{item.fullName || 'Unnamed User'}</T>
+        <T style={[styles.userEmail, { color: secondaryText }]}>{item.email}</T>
       </View>
       {startingChatWith === item.id ? (
         <ActivityIndicator size="small" color={brandColor} />
@@ -169,9 +172,9 @@ export default function NewChatScreen({ navigation, route }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Typography variant="heading3" color={textColor} style={styles.headerTitle}>
-          New Chat
-        </Typography>
+        <T style={[styles.headerTitle, { color: textColor }]}>
+          {t('chats.newChat')}
+        </T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -179,7 +182,7 @@ export default function NewChatScreen({ navigation, route }) {
         <Icon name="search-outline" size={18} color={secondaryText} />
         <TextInput
           style={[styles.searchInput, { color: textColor, marginLeft: 8 }]}
-          placeholder="Search by name or email..."
+          placeholder={t('chats.searchPlaceholderContacts')}
           placeholderTextColor={secondaryText}
           value={searchQuery}
           onChangeText={handleSearch}
@@ -202,9 +205,9 @@ export default function NewChatScreen({ navigation, route }) {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Icon name="people-outline" size={48} color={secondaryText} />
-              <Typography variant="body" color={secondaryText} style={styles.emptyText}>
-                No users found
-              </Typography>
+              <T style={[styles.emptyText, { color: secondaryText }]}>
+                {t('chats.noUsersFound')}
+              </T>
             </View>
           }
         />
@@ -224,7 +227,7 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.sm,
   },
   backButton: { padding: SPACING.xs, width: 40 },
-  headerTitle: { flex: 1, textAlign: 'center' },
+  headerTitle: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -256,7 +259,7 @@ const styles = StyleSheet.create({
     marginRight: SPACING.md,
   },
   userInfo: { flex: 1 },
-  userEmail: { marginTop: SPACING.xs, opacity: 0.6 },
+  userEmail: { marginTop: SPACING.xs, opacity: 0.6, fontSize: 13 },
   emptyContainer: { alignItems: 'center', paddingVertical: SPACING['3xl'] },
-  emptyText: { marginTop: SPACING.md },
+  emptyText: { marginTop: SPACING.md, fontSize: 15 },
 });

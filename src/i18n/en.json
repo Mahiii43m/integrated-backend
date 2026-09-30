@@ -1,6 +1,32 @@
 {
   "onboarding": {
-    "getStarted": "GET STARTED"
+    "getStarted": "GET STARTED",
+    "skip": "Skip",
+    "next": "NEXT",
+    "slide1": {
+      "line1": "PEOPLE",
+      "line2": "IDEAS",
+      "line3": "TOGETHER",
+      "desc": "Chat, share, collaborate, and build without boundaries with Orbit Chat",
+      "cardTitle": "CONNECT",
+      "cardDesc": "Instant messaging for individuals and teams"
+    },
+    "slide2": {
+      "line1": "SPACE",
+      "line2": "SCIENCE",
+      "line3": "INNOVATION",
+      "desc": "Connect researchers, engineers, and field experts across all science centers.",
+      "cardTitle": "COLLABORATE",
+      "cardDesc": "Group channels for space science, CORS network, and geospatial teams"
+    },
+    "slide3": {
+      "line1": "SECURE",
+      "line2": "ENCRYPTED",
+      "line3": "MESSAGING",
+      "desc": "End-to-end encryption for files, voice notes, and official documents.",
+      "cardTitle": "PROTECT",
+      "cardDesc": "Maximum confidentiality for all institute communications"
+    }
   },
   "auth": {
     "signIn": "SIGN IN",
@@ -43,7 +69,26 @@
     "nightMode": "Night Mode",
     "signOut": "Sign Out",
     "cancel": "Cancel",
-    "signOutConfirm": "Are you sure you want to sign out"
+    "signOutConfirm": "Are you sure you want to sign out",
+    "pinned": "PINNED",
+    "admin": "Admin",
+    "noMatches": "No matches found",
+    "tryDifferent": "Try a different name or department",
+    "findPeople": "Find People",
+    "searchPlaceholderContacts": "Search by name or email...",
+    "search": "Search",
+    "noUsersFound": "No users found",
+    "noCallsYet": "No calls yet",
+    "callHistory": "Your call history will appear here",
+    "newGroupTitle": "New Group",
+    "createTab": "Create",
+    "addMembersTab": "Add Members",
+    "groupNameLabel": "GROUP NAME",
+    "departmentLabel": "DEPARTMENT",
+    "selectedMembersLabel": "SELECTED MEMBERS",
+    "createGroupBtn": "CREATE GROUP",
+    "confirmSelectionBtn": "Confirm Selection",
+    "noNotifications": "No new notifications"
   },
   "chat": {
     "messagePlaceholder": "Message...",
@@ -53,57 +98,38 @@
     "video": "Video",
     "voice": "Voice",
     "attachment": "Attachment",
-    "uploading": "Uploading attachment...",
-    "call": "Call",
-    "videoCall": "Video"
+    "send": "Send",
+    "record": "Hold to record",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "forward": "Forward",
+    "reply": "Reply",
+    "copy": "Copy",
+    "info": "Message Info",
+    "readBy": "Read by",
+    "deliveredTo": "Delivered to"
   },
   "settings": {
+    "title": "Settings",
     "account": "Account",
-    "privacy": "Privacy & Security",
+    "chats": "Chats",
     "notifications": "Notifications",
-    "theme": "Theme",
-    "backup": "Backup & Storage",
-    "devices": "Devices",
+    "privacy": "Privacy & Security",
+    "storage": "Storage and Data",
     "help": "Help & FAQ",
-    "about": "About",
+    "about": "About SSGI",
+    "theme": "Theme",
     "language": "Language",
-    "english": "English",
-    "amharic": "አማርኛ",
-    "profileAndAccount": "PROFILE & ACCOUNT",
-    "chatsAndMessages": "CHATS & MESSAGES",
-    "notificationsAndSounds": "NOTIFICATIONS & SOUNDS",
-    "appearance": "APPEARANCE",
-    "supportAndAbout": "SUPPORT & ABOUT",
-    "messageSettings": "Message Settings",
-    "notificationSound": "Notification Sound",
-    "signOut": "Sign Out",
-    "accentColor": "Accent Color",
-    "darkMode": "Dark Mode",
-    "helpFAQ": "Help & FAQ",
-    "aboutOrbitChat": "About Orbit Chat",
-    "chatsSettings": "Chats",
-    "editProfile": "Edit Profile"
+    "replayOnboarding": "Replay Onboarding Slides"
   },
-  "profile": {
-    "ssgiStaff": "SSGI Staff",
-    "spaceScience": "Space Science",
-    "instituteName": "Space Science & Geospatial Institute",
-    "instituteDesc": "Leading Africa''s space and geospatial sector through research, innovation, and collaboration.",
-    "visitWebsite": "Visit SSGI Website",
-    "accountSettings": "ACCOUNT SETTINGS",
-    "editProfile": "Edit Profile",
-    "changePassword": "Change Password",
-    "myPublications": "My Publications",
-    "groupChats": "Group Chats",
-    "featureComingSoon": "Feature coming soon!",
-    "memberSince": "Member since",
-    "researchArea": "Research Area"
-  },
-  "notifications": {
-    "preferences": "NOTIFICATION PREFERENCES",
-    "ssgiAnnouncements": "SSGI Announcements",
-    "training": "Training & Workshops",
-    "research": "Research Publications",
-    "events": "Events & Conferences"
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error"
   }
 }

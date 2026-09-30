@@ -8,8 +8,10 @@ import {
   StatusBar,
   Linking,
   Platform,
+  Alert,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../firebase/context/ThemeContext';
 import { LogoSVG as Logo } from '../../components/Branding';
@@ -18,14 +20,9 @@ import T from '../../components/T';
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
   if (name === 'chevron-back-outline') path = 'M15 19l-7-7 7-7';
-  if (name === 'share-social-outline') path = 'M18 8a3 3 0 1 0-3-3 3 3 0 0 0 3 3z M6 15a3 3 0 1 0-3-3 3 3 0 0 0 3 3z M18 19a3 3 0 1 0-3-3 3 3 0 0 0 3 3z M8.59 13.51l6.83 3.98 M15.41 6.51L8.59 10.49';
-  if (name === 'star-outline') path = 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
   if (name === 'globe-outline') path = 'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z M12 2v20 M2 12h20';
-  if (name === 'chatbubbles-outline') path = 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z';
-  if (name === 'lock-closed-outline') path = 'M7 11V7a5 5 0 0 1 10 0v4 M19 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z';
-  if (name === 'people-outline') path = 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0-4-4 4 4 0 0 0 4 4z';
-  if (name === 'moon-outline') path = 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z';
   if (name === 'rocket-outline') path = 'M4.5 16.5c0 0 4.5 1.5 7.5-3s3-7.5 3-7.5-4.5-1.5-7.5 3-3 7.5-3 7.5z M8 13l-3 3 M11 10l3-3';
+  if (name === 'play-circle-outline') path = 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M10 8l6 4-6 4V8z';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -46,7 +43,24 @@ export default function AboutScreen({ navigation }) {
   const borderColor = colors.border;
   const cardColor = colors.rowBg;
   const brandColor = colors.primary;
-  const accentColor = colors.tabActiveBg;
+  const goldAccent = '#de994a';
+
+  const DIRECTORATES = [
+    { title: isAmharic ? 'የጠፈር ሳይንስና አስትሮኖሚ' : 'Space Science & Astronomy', desc: isAmharic ? 'የእንጦጦ ኦብዘርቫቶሪ እና የከዋክብት ምርምር' : 'Entoto Observatory & Astrophysics Research' },
+    { title: isAmharic ? 'ጂኦስፓሻል እና ሪሞት ሴንሲንግ' : 'Geospatial & Remote Sensing', desc: isAmharic ? 'የመሬት ምልከታ እና ዲጂታል አድራሻ (eDAS)' : 'Earth Observation & Digital Addressing (eDAS)' },
+    { title: isAmharic ? 'የሳተላይት ሲስተምስ እና ኢንጂነሪንግ' : 'Satellite Systems & Engineering', desc: isAmharic ? 'የሳተላይት ልማት እና ቴሌሜትሪ ክትትል' : 'Satellite Development & Telemetry Tracking' },
+    { title: isAmharic ? 'ጂኦደሲ እና CORS ኔትወርክ' : 'Geodetic CORS Network', desc: isAmharic ? 'አገር አቀፍ የሳተላይት አሰሳ ኔትወርክ' : 'National Satellite CORS Positioning Network' },
+  ];
+
+  const handleReplayOnboarding = async () => {
+    try {
+      await AsyncStorage.removeItem('has_completed_onboarding');
+      navigation.navigate('Onboarding');
+    } catch (e) {
+      console.error(e);
+      Alert.alert('Error', 'Could not open onboarding.');
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
@@ -61,51 +75,62 @@ export default function AboutScreen({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[styles.heroBanner, { backgroundColor: isDark ? '#1a2a4a' : brandColor }]}>
+        <View style={[styles.heroBanner, { backgroundColor: isDark ? '#0f2238' : brandColor }]}>
           <View style={styles.heroContent}>
             <Logo width={120} height={120} />
             <T style={[styles.appName, { color: '#ffffff' }]}>Orbit Chat</T>
-            <T style={[styles.appVersion, { color: 'rgba(255,255,255,0.8)' }]}>Version 1.0.0</T>
+            <T style={[styles.appVersion, { color: 'rgba(255,255,255,0.85)' }]}>v1.0.0 • SSGI Official App</T>
           </View>
         </View>
 
         <View style={styles.taglineContainer}>
-          <T style={[styles.tagline, { color: secondaryText }]}>
-            {isAmharic ? 'ለህዋ እና ጂኦስፓሻል ቡድኖች ደህንነቱ የተጠበቀ ግንኙነት' : 'Secure Communication for Space & Geospatial Teams'}
+          <T style={[styles.tagline, { color: goldAccent }]}>
+            {isAmharic ? 'ከምድር ወደ ጠፈር — Space Science & Geospatial Institute' : 'Empowering Nations Through Space & Geospatial Technology'}
           </T>
         </View>
 
+        {/* About SSGI */}
         <View style={[styles.aboutCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <T style={[styles.aboutTitle, { color: textColor }]}>{isAmharic ? 'ስለ ኦርቢት ቻት' : 'About Orbit Chat'}</T>
+          <T style={[styles.aboutTitle, { color: textColor }]}>{isAmharic ? 'ስለ SSGI' : 'About SSGI'}</T>
           <T style={[styles.aboutDescription, { color: secondaryText }]}>
             {isAmharic
-              ? 'ኦርቢት ቻት ለህዋ ሳይንስና ጂኦስፓሻል ኢንስቲትዩት (SSGI) የተዘጋጀ ደህንነቱ የተጠበቀ የመልእክት መላኪያ መተግበሪያ ነው።'
-              : 'Orbit Chat is a secure, real‑time messaging platform built exclusively for the Space Science and Geospatial Institute (SSGI).'}
+              ? 'የህዋ ሳይንስና ጂኦስፓሻል ኢንስቲትዩት (SSGI) በኢትዮጵያ በ2014 ዓ.ም የተቋቋመ የመንግስት ተቋም ሲሆን የጠፈር ሳይንስን፣ የሳተላይት ቴክኖሎጂን እና የጂኦስፓሻል መረጃዎችን በምርምርና በፈጠራ ያጎለብታል።'
+              : 'The Space Science and Geospatial Institute (SSGI) is Ethiopia\'s premier institution established in 2022, leading Africa\'s space, satellite, and geospatial sector through research, innovation, and collaboration.'}
           </T>
           <TouchableOpacity style={[styles.websiteButton, { backgroundColor: brandColor }]} onPress={() => Linking.openURL('https://ssgi.gov.et/')}>
-            <T style={styles.buttonText}>{isAmharic ? 'የ SSGI ድህረ ገጽን ይጎብኙ' : 'Visit SSGI Website'}</T>
+            <Icon name="globe-outline" size={18} color="#ffffff" />
+            <T style={[styles.buttonText, { marginLeft: 8 }]}>{isAmharic ? 'የ SSGI ድህረ ገጽን ይጎብኙ' : 'Visit Official SSGI Website'}</T>
           </TouchableOpacity>
         </View>
 
+        {/* SSGI Core Directorates */}
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <T style={[styles.sectionLabel, { color: secondaryText }]}>🚀 {isAmharic ? 'ባህሪያት' : 'Features'}</T>
-          <View style={styles.featuresGrid}>
-            {[
-              { icon: 'chatbubbles-outline', label: isAmharic ? 'መልእክት መላኪያ' : 'Messaging', color: accentColor },
-              { icon: 'lock-closed-outline', label: isAmharic ? 'የተጠበቀ' : 'Encrypted', color: '#34c759' },
-              { icon: 'people-outline', label: isAmharic ? 'ቡድኖች' : 'Groups', color: '#5ac8fa' },
-              { icon: 'moon-outline', label: isAmharic ? 'ገጽታዎች' : 'Themes', color: '#ff9f0a' },
-            ].map((item, index) => (
-              <View key={index} style={styles.featureItem}>
-                <Icon name={item.icon} size={18} color={item.color} />
-                <T style={[styles.featureLabel, { color: secondaryText, marginLeft: 8 }]}>{item.label}</T>
+          <T style={[styles.sectionLabel, { color: secondaryText }]}>🏛️ {isAmharic ? 'የSSGI ዋና ዳይሬክቶሬቶች' : 'SSGI Core Directorates'}</T>
+          {DIRECTORATES.map((item, index) => (
+            <View key={index} style={[styles.dirRow, index < DIRECTORATES.length - 1 && { borderBottomWidth: 1, borderBottomColor: borderColor }]}>
+              <Icon name="rocket-outline" size={18} color={goldAccent} />
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <T style={[styles.dirTitle, { color: textColor }]}>{item.title}</T>
+                <T style={[styles.dirDesc, { color: secondaryText }]}>{item.desc}</T>
               </View>
-            ))}
-          </View>
+            </View>
+          ))}
         </View>
 
+        {/* Replay Onboarding Button */}
+        <TouchableOpacity
+          style={[styles.onboardingBtn, { backgroundColor: cardColor, borderColor: goldAccent }]}
+          onPress={handleReplayOnboarding}
+          activeOpacity={0.8}
+        >
+          <Icon name="play-circle-outline" size={20} color={goldAccent} />
+          <T style={[styles.onboardingBtnText, { color: goldAccent, marginLeft: 8 }]}>
+            {isAmharic ? 'የመግቢያ መመሪያዎችን እንደገና ማየት' : 'Replay Onboarding Slides'}
+          </T>
+        </TouchableOpacity>
+
         <View style={styles.footer}>
-          <T style={[styles.copyrightText, { color: secondaryText }]}>© 2025 Orbit Chat. All rights reserved.</T>
+          <T style={[styles.copyrightText, { color: secondaryText }]}>© 2026 Space Science and Geospatial Institute (SSGI). All rights reserved.</T>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -118,22 +143,24 @@ const styles = StyleSheet.create({
   backButton: { padding: 4, width: 40 },
   headerTitle: { fontSize: 20, fontWeight: '700', flex: 1, textAlign: 'center' },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
-  heroBanner: { paddingVertical: 32, borderRadius: 24, alignItems: 'center', marginBottom: 20 },
+  heroBanner: { paddingVertical: 28, borderRadius: 24, alignItems: 'center', marginBottom: 16 },
   heroContent: { alignItems: 'center' },
-  appName: { fontSize: 28, fontWeight: '700', marginTop: 12 },
-  appVersion: { fontSize: 14, marginTop: 4 },
-  taglineContainer: { paddingVertical: 16, alignItems: 'center' },
-  tagline: { fontSize: 15, textAlign: 'center', opacity: 0.8 },
-  aboutCard: { borderRadius: 16, borderWidth: 1, padding: 20, marginBottom: 16 },
-  aboutTitle: { fontSize: 20, fontWeight: '700', marginBottom: 12 },
+  appName: { fontSize: 28, fontWeight: '800', marginTop: 10 },
+  appVersion: { fontSize: 13, marginTop: 4 },
+  taglineContainer: { paddingVertical: 12, alignItems: 'center' },
+  tagline: { fontSize: 14, fontWeight: '700', textAlign: 'center', letterSpacing: 0.3 },
+  aboutCard: { borderRadius: 16, borderWidth: 1, padding: 18, marginBottom: 16 },
+  aboutTitle: { fontSize: 18, fontWeight: '700', marginBottom: 10 },
   aboutDescription: { fontSize: 14, lineHeight: 22 },
-  websiteButton: { paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginTop: 16 },
-  buttonText: { color: '#ffffff', fontWeight: '600', fontSize: 15 },
+  websiteButton: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 12, borderRadius: 12, marginTop: 16 },
+  buttonText: { color: '#ffffff', fontWeight: '600', fontSize: 14 },
   card: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 16 },
-  sectionLabel: { fontSize: 14, fontWeight: '600', marginBottom: 12 },
-  featuresGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  featureItem: { width: '48%', flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
-  featureLabel: { fontSize: 13 },
-  footer: { alignItems: 'center', marginTop: 20 },
-  copyrightText: { fontSize: 12, opacity: 0.6 },
+  sectionLabel: { fontSize: 13, fontWeight: '700', textTransform: 'uppercase', marginBottom: 12 },
+  dirRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
+  dirTitle: { fontSize: 14, fontWeight: '600' },
+  dirDesc: { fontSize: 12, opacity: 0.7, marginTop: 2 },
+  onboardingBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 14, borderWidth: 1, marginBottom: 16 },
+  onboardingBtnText: { fontSize: 15, fontWeight: '600' },
+  footer: { alignItems: 'center', marginTop: 16 },
+  copyrightText: { fontSize: 11, opacity: 0.6, textAlign: 'center' },
 });

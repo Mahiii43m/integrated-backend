@@ -16,6 +16,8 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const { width } = Dimensions.get('window');
 const STORAGE_KEY = 'chat_settings';
@@ -41,6 +43,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function ChatSettingsScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [settings, setSettings] = useState({
     fontSize: 'medium',
@@ -77,8 +80,8 @@ export default function ChatSettingsScreen({ navigation }) {
       <View style={styles.toggleLabel}>
         <Icon name={icon} size={18} color={accentColor} />
         <View style={{ marginLeft: 12, flex: 1 }}>
-          <Text style={[styles.toggleText, { color: textColor }]}>{label}</Text>
-          {description && <Text style={[styles.toggleDescription, { color: secondaryText }]}>{description}</Text>}
+          <T style={[styles.toggleText, { color: textColor }]}>{label}</T>
+          {description && <T style={[styles.toggleDescription, { color: secondaryText }]}>{description}</T>}
         </View>
       </View>
       <Switch
@@ -99,31 +102,31 @@ export default function ChatSettingsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Chats</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('tabs.chats')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="chatbubbles-outline" size={18} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
-            Customise your chat experience. Changes are saved automatically.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
+            {t('chatSettings.info')}
+          </T>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Behavior</Text>
-          {renderToggleRow('Enter to Send', 'enterToSend', 'return-down-back-outline', 'Press Enter to send a message')}
-          {renderToggleRow('Double‑tap to Reply', 'doubleTapReply', 'hand-left-outline', 'Double‑tap a message to reply')}
-          {renderToggleRow('Show Message Previews', 'showPreviews', 'eye-outline', 'Show message preview in chat list')}
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('chatSettings.behavior')}</T>
+          {renderToggleRow(t('chatSettings.enterToSend'), 'enterToSend', 'return-down-back-outline', t('chatSettings.enterToSendDesc'))}
+          {renderToggleRow(t('chatSettings.doubleTapReply'), 'doubleTapReply', 'hand-left-outline', t('chatSettings.doubleTapReplyDesc'))}
+          {renderToggleRow(t('chatSettings.showPreviews'), 'showPreviews', 'eye-outline', t('chatSettings.showPreviewsDesc'))}
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Wallpaper</Text>
-          <TouchableOpacity style={styles.optionRow} onPress={() => Alert.alert('Wallpaper', 'Coming soon!')}>
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('chatSettings.wallpaper')}</T>
+          <TouchableOpacity style={styles.optionRow} onPress={() => Alert.alert(t('chatSettings.wallpaper'), t('profile.featureComingSoon'))}>
             <View style={styles.optionLeft}>
               <Icon name="image-outline" size={18} color={goldAccent} />
-              <Text style={[styles.optionText, { color: textColor, marginLeft: 12 }]}>Chat Wallpaper</Text>
+              <T style={[styles.optionText, { color: textColor, marginLeft: 12 }]}>{t('chatSettings.chatWallpaper')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={16} color={secondaryText} />
           </TouchableOpacity>

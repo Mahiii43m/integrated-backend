@@ -53,7 +53,6 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   if (name === 'chatbubble-ellipses-outline') path = 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.1c1.5 0 3 .4 4.3 1.1L21 1.5l-1.1 4.2c.7 1.3 1.1 2.8 1.1 4.3z M8 12h.01 M12 12h.01 M16 12h.01';
   if (name === 'settings-outline') path = 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z';
   if (name === 'person-outline') path = 'M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2';
-  if (name === 'call-outline') path = 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -61,14 +60,6 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
     </Svg>
   );
 };
-
-const DEPARTMENT_TABS = [
-  { id: 'all', label: 'All', icon: 'planet-outline' },
-  { id: 'space', label: 'Space', icon: 'rocket-outline' },
-  { id: 'geospatial', label: 'Geo', icon: 'map-outline' },
-  { id: 'research', label: 'Research', icon: 'flask-outline' },
-  { id: 'operations', label: 'Ops', icon: 'radio-outline' },
-];
 
 const DEPARTMENT_TAG_MAP = {
   'Space Science': 'space',
@@ -80,9 +71,11 @@ const DEPARTMENT_TAG_MAP = {
 
 export default function ChatsListScreen({ navigation }) {
   const { user, logout } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme, toggleTheme, colors } = useTheme();
   const isDark = theme === 'dark';
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
+
   const [chats, setChats] = useState([]);
   const [pinnedIds, setPinnedIds] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState('');
@@ -91,13 +84,20 @@ export default function ChatsListScreen({ navigation }) {
   const [showMenu, setShowMenu] = useState(false);
   const searchInputRef = React.useRef(null);
 
+  const DEPARTMENT_TABS = [
+    { id: 'all', label: t('chats.all'), icon: 'planet-outline' },
+    { id: 'space', label: isAmharic ? 'ጠፈር' : 'Space', icon: 'rocket-outline' },
+    { id: 'geospatial', label: isAmharic ? 'ጂኦ' : 'Geo', icon: 'map-outline' },
+    { id: 'research', label: isAmharic ? 'ምርምር' : 'Research', icon: 'flask-outline' },
+    { id: 'operations', label: isAmharic ? 'ኦፕስ' : 'Ops', icon: 'radio-outline' },
+  ];
+
   const bgColor = colors?.background || '#0a0e1a';
   const textColor = colors?.rowText || colors?.text || '#ffffff';
   const secondaryText = colors?.rowTime || '#a0a0b0';
   const cardColor = colors?.rowBg || 'rgba(255,255,255,0.06)';
   const brandColor = colors?.primary || '#1a4b8c';
   const accentColor = colors?.tabActiveBg || '#6c5ce7';
-  const goldAccent = '#de994a';
   const borderColor = colors?.border || 'rgba(255,255,255,0.1)';
 
   const adminBadgeBg = isDark ? 'rgba(108, 92, 231, 0.2)' : 'rgba(108, 92, 231, 0.15)';
@@ -128,14 +128,14 @@ export default function ChatsListScreen({ navigation }) {
   const userProfiles = useUserProfiles(directChatOtherUids);
 
   const getChatDisplayName = (chat) => {
-    if (chat.type === 'group') return chat.groupName || chat.name || 'Group';
+    if (chat.type === 'group') return chat.groupName || chat.name || (isAmharic ? 'ቡድን' : 'Group');
     const otherUid = chat.participants?.find((uid) => uid !== user?.uid);
     if (!otherUid && chat.groupName) return chat.groupName;
     return getDisplayName(userProfiles, otherUid);
   };
 
   const getChatPreviewText = (chat) => {
-    return chat.lastMessage?.text || 'No messages yet';
+    return chat.lastMessage?.text || (isAmharic ? 'እስካሁን ምንም መልዕክት የለም' : 'No messages yet');
   };
 
   const getChatTime = (chat) => {
@@ -150,8 +150,15 @@ export default function ChatsListScreen({ navigation }) {
   };
 
   const getDepartmentLabel = (chat) => {
-    if (chat.type !== 'group') return 'Personal';
-    return chat.department || 'Group';
+    if (chat.type !== 'group') return isAmharic ? 'ግላዊ' : 'Personal';
+    if (isAmharic) {
+      if (chat.department === 'Space Science') return 'የጠፈር ሳይንስ';
+      if (chat.department === 'Geospatial Division') return 'ጂኦስፓሻል ዘርፍ';
+      if (chat.department === 'Research') return 'ምርምር';
+      if (chat.department === 'Operations') return 'ኦፕሬሽንስ';
+      if (chat.department === 'Support') return 'ድጋፍ';
+    }
+    return chat.department || (isAmharic ? 'ቡድን' : 'Group');
   };
 
   const isChatAdmin = (chat) => {
@@ -200,7 +207,7 @@ export default function ChatsListScreen({ navigation }) {
       const chatId = await getOrCreateSelfChat(user.uid);
       navigation.navigate('ChatWindow', {
         chatId: chatId,
-        contactName: 'Saved Messages',
+        contactName: t('chats.savedMessages'),
       });
     } catch (error) {
       console.error('Error starting self-chat:', error);
@@ -210,7 +217,7 @@ export default function ChatsListScreen({ navigation }) {
 
   const openAboutSSGI = () => {
     setShowMenu(false);
-    Alert.alert('About SSGI', 'Space Science and Geospatial Institute - established 2022.');
+    Alert.alert(t('chats.aboutSSGI'), isAmharic ? 'የህዋ ሳይንስ እና ጂኦስፓሻል ኢንስቲትዩት - በ 2015 ተመሠረተ።' : 'Space Science and Geospatial Institute - established 2022.');
   };
 
   const handleLongPressChat = (chat) => {
@@ -256,7 +263,7 @@ export default function ChatsListScreen({ navigation }) {
         activeOpacity={0.6}
       >
         <View style={[styles.avatar, isGroup && styles.avatarGroup]}>
-          <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
+          <T style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</T>
           {isAdmin && (
             <View style={[styles.adminDot, { borderColor: isDark ? '#0a0e1a' : '#ffffff' }]}>
               <Icon name="shield-checkmark" size={10} color="#ffffff" />
@@ -274,34 +281,34 @@ export default function ChatsListScreen({ navigation }) {
                   color={pinnedBorderColor}
                 />
               )}
-              <Text style={[styles.chatName, { color: textColor, marginLeft: isPinned ? 4 : 0 }]} numberOfLines={1}>
+              <T style={[styles.chatName, { color: textColor, marginLeft: isPinned ? 4 : 0 }]} numberOfLines={1}>
                 {displayName}
-              </Text>
-              {isUrgent && <Text style={styles.urgentIcon}>!</Text>}
+              </T>
+              {isUrgent && <T style={styles.urgentIcon}>!</T>}
               {isAdmin && (
                 <View style={[styles.adminBadge, { backgroundColor: adminBadgeBg }]}>
-                  <Text style={[styles.adminBadgeText, { color: adminBadgeText }]}>Admin</Text>
+                  <T style={[styles.adminBadgeText, { color: adminBadgeText }]}>{t('chats.admin')}</T>
                 </View>
               )}
             </View>
-            <Text style={[styles.chatTime, { color: secondaryText }]}>{getChatTime(item)}</Text>
+            <T style={[styles.chatTime, { color: secondaryText }]}>{getChatTime(item)}</T>
           </View>
 
           <View style={styles.chatBottomRow}>
-            <Text style={[styles.chatPreview, { color: secondaryText }]} numberOfLines={1}>
+            <T style={[styles.chatPreview, { color: secondaryText }]} numberOfLines={1}>
               {getChatPreviewText(item)}
-            </Text>
+            </T>
             {item.unreadCount > 0 && (
               <View style={[styles.unreadBadge, { backgroundColor: brandColor }]}>
-                <Text style={styles.unreadText}>{item.unreadCount}</Text>
+                <T style={styles.unreadText}>{item.unreadCount}</T>
               </View>
             )}
           </View>
 
           <View style={styles.chatMetaRow}>
-            <Text style={[styles.departmentLabel, { color: accentColor }]}>
+            <T style={[styles.departmentLabel, { color: accentColor }]}>
               {getDepartmentLabel(item)}
-            </Text>
+            </T>
             <View style={styles.iconRow}>
               {hasFiles && (
                 <Icon name="attach-outline" size={14} color={secondaryText} />
@@ -321,7 +328,7 @@ export default function ChatsListScreen({ navigation }) {
     return (
       <View style={[styles.sectionRow, { backgroundColor: cardColor }]}>
         <View style={[styles.sectionLine, { backgroundColor: borderColor }]} />
-        <Text style={[styles.sectionLabel, { color: secondaryText }]}>{item.title}</Text>
+        <T style={[styles.sectionLabel, { color: secondaryText }]}>{t('tabs.contacts')}</T>
         <View style={[styles.sectionLine, { backgroundColor: borderColor }]} />
       </View>
     );
@@ -332,7 +339,7 @@ export default function ChatsListScreen({ navigation }) {
     return (
       <View style={[styles.pinnedHeader, { borderBottomColor: borderColor }]}>
         <Icon name="pin" size={16} color={brandColor} />
-        <Text style={[styles.pinnedHeaderText, { color: pinnedHeaderColor, marginLeft: 6 }]}>PINNED</Text>
+        <T style={[styles.pinnedHeaderText, { color: pinnedHeaderColor, marginLeft: 6 }]}>{t('chats.pinned')}</T>
       </View>
     );
   };
@@ -357,8 +364,7 @@ export default function ChatsListScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgColor, experimental_backgroundImage: isDark ? 'linear-gradient(180deg, #1a2532, #0f1821)' : 'linear-gradient(180deg, #ffffff, #f0f4f8)' }]}>
-      
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgColor }]}>
       <StatusBar barStyle="light-content" backgroundColor="#0080ce" />
 
       <View style={styles.header}>
@@ -367,9 +373,6 @@ export default function ChatsListScreen({ navigation }) {
             <Logo width={34} height={34} />
             <T style={styles.headerTitleText}>{t('chats.title')}</T>
           </View>
-
-
-          
 
           <View style={styles.rightControls}>
             <TouchableOpacity
@@ -430,9 +433,9 @@ export default function ChatsListScreen({ navigation }) {
                 size={16}
                 color={activeTab === tab.id ? '#ffffff' : secondaryText}
               />
-              <Text style={[styles.tabText, { color: activeTab === tab.id ? '#ffffff' : secondaryText, marginLeft: 4 }]}>
+              <T style={[styles.tabText, { color: activeTab === tab.id ? '#ffffff' : secondaryText, marginLeft: 4 }]}>
                 {tab.label}
-              </Text>
+              </T>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -462,15 +465,15 @@ export default function ChatsListScreen({ navigation }) {
               <Icon name="chatbubble-ellipses-outline" size={48} color="#de994a" />
             </View>
 
-            <Text style={[styles.emptyTitle, { color: textColor }]}>
-              {searchQuery.trim() ? 'No matches found' : 'No conversations yet'}
-            </Text>
+            <T style={[styles.emptyTitle, { color: textColor }]}>
+              {searchQuery.trim() ? t('chats.noMatches') : t('chats.noConversations')}
+            </T>
 
-            <Text style={[styles.emptySubtitle, { color: secondaryText }]}>
+            <T style={[styles.emptySubtitle, { color: secondaryText }]}>
               {searchQuery.trim()
-                ? 'Try a different name or department'
-                : 'Start a conversation with your team'}
-            </Text>
+                ? t('chats.tryDifferent')
+                : t('chats.startConversation')}
+            </T>
 
             {!searchQuery.trim() && (
               <TouchableOpacity
@@ -479,7 +482,7 @@ export default function ChatsListScreen({ navigation }) {
                 activeOpacity={0.85}
               >
                 <Icon name="chatbubble-outline" size={18} color="#ffffff" />
-                <Text style={styles.emptyBtnPrimaryText}>New Chat</Text>
+                <T style={styles.emptyBtnPrimaryText}>{t('chats.newChat')}</T>
               </TouchableOpacity>
             )}
           </View>
@@ -491,52 +494,51 @@ export default function ChatsListScreen({ navigation }) {
           <View style={[styles.menuContainer, { backgroundColor: cardColor, borderColor: borderColor }]}>
             <TouchableOpacity style={styles.menuItem} onPress={openNewChat}>
               <Icon name="chatbubble-outline" size={20} color={accentColor} />
-              <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>New Chat</Text>
+              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.newChat')}</T>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={openNewGroup}>
               <Icon name="people-outline" size={20} color={brandColor} />
-              <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>New Group</Text>
+              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.newGroup')}</T>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
             <TouchableOpacity style={styles.menuItem} onPress={handleDayMode}>
               <Icon name={isDark ? 'sunny-outline' : 'moon-outline'} size={20} color={secondaryText} />
-              <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>
-                {isDark ? 'Day Mode' : 'Night Mode'}
-              </Text>
+              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>
+                {isDark ? t('chats.dayMode') : t('chats.nightMode')}
+              </T>
             </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={handleSavedMessages}>
               <Icon name="bookmark-outline" size={20} color={secondaryText} />
-              <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>Saved Messages</Text>
+              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.savedMessages')}</T>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
             <TouchableOpacity style={styles.menuItem} onPress={openAboutSSGI}>
               <Icon name="information-circle-outline" size={20} color={secondaryText} />
-              <Text style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>About SSGI</Text>
+              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.aboutSSGI')}</T>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
             <TouchableOpacity style={styles.menuItem} onPress={() => { setShowMenu(false); setShowLogoutModal(true); }}>
               <Icon name="person-outline" size={20} color="#c0392b" />
-              <Text style={[styles.menuItemText, { color: '#c0392b', marginLeft: 12 }]}>Sign Out</Text>
+              <T style={[styles.menuItemText, { color: '#c0392b', marginLeft: 12 }]}>{t('chats.signOut')}</T>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       )}
 
-
       <Modal transparent animationType="fade" visible={showLogoutModal} onRequestClose={() => setShowLogoutModal(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Sign Out</Text>
-            <Text style={styles.modalMessage}>
-              Are you sure you want to sign out{user?.fullName || user?.name ? `, ${user.fullName || user.name}` : ''}
+            <T style={styles.modalTitle}>{t('chats.signOut')}</T>
+            <T style={styles.modalMessage}>
+              {t('chats.signOutConfirm')}{user?.fullName || user?.name ? `, ${user.fullName || user.name}` : ''}
               {user?.email ? ` (${user.email})` : ''}?
-            </Text>
+            </T>
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowLogoutModal(false)} activeOpacity={0.8}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
+                <T style={styles.cancelBtnText}>{t('chats.cancel')}</T>
               </TouchableOpacity>
               <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.8}>
-                <Text style={styles.logoutBtnText}>Sign Out</Text>
+                <T style={styles.logoutBtnText}>{t('chats.signOut')}</T>
               </TouchableOpacity>
             </View>
           </View>
@@ -561,14 +563,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
-  profileBtn: { padding: 2 },
-  profileAvatar: { width: 32, height: 32, borderRadius: 16 },
-  profileAvatarFallback: { justifyContent: 'center', alignItems: 'center' },
-  profileAvatarText: { color: '#ffffff', fontSize: 14, fontWeight: 'bold' },
-  pillBtn: { borderRadius: 14, paddingVertical: 5, paddingHorizontal: 16 },
-  pillBtnText: { color: '#ffffff', fontWeight: 'bold', fontSize: 14 },
-  titlePill: { borderRadius: 14, paddingVertical: 5, paddingHorizontal: 22 },
-  titlePillText: { color: '#ffffff', fontWeight: 'bold', fontSize: 15 },
   rightControls: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -696,12 +690,8 @@ const styles = StyleSheet.create({
   emptyIconCircle: { width: 110, height: 110, borderRadius: 55, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
   emptyTitle: { fontSize: 18, fontWeight: '700', marginBottom: 8, textAlign: 'center' },
   emptySubtitle: { fontSize: 14, textAlign: 'center', lineHeight: 20, marginBottom: 24 },
-  emptyButtonsRow: { flexDirection: 'column', gap: 12, width: '100%', alignItems: 'center' },
   emptyBtnPrimary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 24, minWidth: 160 },
   emptyBtnPrimaryText: { color: '#ffffff', fontWeight: '600', fontSize: 14, marginLeft: 8 },
-  emptyBtnSecondary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 24, borderWidth: 1.5, minWidth: 160 },
-  emptyBtnSecondaryText: { fontWeight: '600', fontSize: 14, marginLeft: 8 },
-  emptyText: { fontSize: 16, marginTop: 12 },
   menuOverlay: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
@@ -722,25 +712,6 @@ const styles = StyleSheet.create({
   menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 16 },
   menuItemText: { fontSize: 15 },
   menuDivider: { height: 1, marginVertical: 4, marginHorizontal: 12 },
-  bottomBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
-    borderTopWidth: 1,
-  },
-  navCapsule: {
-    flex: 1,
-    flexDirection: 'row',
-    borderRadius: 28,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 10,
-  },
-  navBtn: { flex: 1, alignItems: 'center', paddingVertical: 6 },
-  navAvatar: { width: 24, height: 24, borderRadius: 12 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.45)',

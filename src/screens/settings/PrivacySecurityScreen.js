@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -40,6 +42,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function PrivacySecurityScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [preferences, setPreferences] = useState({
     lastSeen: true,
@@ -72,8 +75,8 @@ export default function PrivacySecurityScreen({ navigation }) {
       <View style={styles.toggleLabel}>
         {icon && <Icon name={icon} size={20} color={secondaryText} />}
         <View style={{ marginLeft: 12 }}>
-          <Text style={[styles.toggleText, { color: textColor }]}>{label}</Text>
-          {description && <Text style={[styles.toggleDescription, { color: secondaryText }]}>{description}</Text>}
+          <T style={[styles.toggleText, { color: textColor }]}>{label}</T>
+          {description && <T style={[styles.toggleDescription, { color: secondaryText }]}>{description}</T>}
         </View>
       </View>
       <Switch
@@ -87,7 +90,7 @@ export default function PrivacySecurityScreen({ navigation }) {
   );
 
   const handleAction = (title) => {
-    Alert.alert(title, 'Feature coming soon!');
+    Alert.alert(title, t('profile.featureComingSoon'));
   };
 
   const renderSessionItem = (session, index) => (
@@ -95,12 +98,12 @@ export default function PrivacySecurityScreen({ navigation }) {
       <View style={styles.sessionLeft}>
         <Icon name="phone-portrait-outline" size={20} color={accentColor} />
         <View style={{ marginLeft: 12 }}>
-          <Text style={[styles.sessionDevice, { color: textColor }]}>{session.device}</Text>
-          <Text style={[styles.sessionLocation, { color: secondaryText }]}>{session.location} • {session.lastActive}</Text>
+          <T style={[styles.sessionDevice, { color: textColor }]}>{session.device}</T>
+          <T style={[styles.sessionLocation, { color: secondaryText }]}>{session.location} • {session.lastActive}</T>
         </View>
       </View>
       <TouchableOpacity style={styles.sessionAction} onPress={() => handleAction('Revoke Session')}>
-        <Text style={[styles.sessionActionText, { color: accentColor }]}>Revoke</Text>
+        <T style={[styles.sessionActionText, { color: accentColor }]}>{t('devices.revoke')}</T>
       </TouchableOpacity>
     </View>
   );
@@ -113,80 +116,80 @@ export default function PrivacySecurityScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Privacy & Security</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.privacy')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="shield-checkmark-outline" size={28} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
-            Control your privacy and security settings. Changes are saved automatically.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 12 }]}>
+            {t('privacy.info')}
+          </T>
         </View>
 
         <View style={[styles.securityStatus, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <View style={styles.securityStatusLeft}>
             <Icon name="shield-checkmark-outline" size={24} color="#34c759" />
-            <Text style={[styles.securityStatusTitle, { color: textColor, marginLeft: 10 }]}>Your account is secure</Text>
+            <T style={[styles.securityStatusTitle, { color: textColor, marginLeft: 10 }]}>{t('privacy.accountSecure')}</T>
           </View>
           <View style={styles.securityStatusBadge}>
-            <Text style={[styles.securityStatusText, { color: '#34c759' }]}>Active</Text>
+            <T style={[styles.securityStatusText, { color: '#34c759' }]}>{t('privacy.active')}</T>
           </View>
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Privacy</Text>
-          {renderToggleRow('Last Seen', 'lastSeen', 'time-outline', 'Show when you were last active')}
-          {renderToggleRow('Read Receipts', 'readReceipts', 'checkmark-done-outline', 'Show when you\'ve read messages')}
-          {renderToggleRow('Online Status', 'onlineStatus', 'radio-button-on-outline', 'Show when you\'re online')}
-          {renderToggleRow('Profile Photo', 'profilePhoto', 'image-outline', 'Allow others to see your photo')}
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('privacy.privacy')}</T>
+          {renderToggleRow(t('privacy.lastSeen'), 'lastSeen', 'time-outline', t('privacy.lastSeenDesc'))}
+          {renderToggleRow(t('privacy.readReceipts'), 'readReceipts', 'checkmark-done-outline', t('privacy.readReceiptsDesc'))}
+          {renderToggleRow(t('privacy.onlineStatus'), 'onlineStatus', 'radio-button-on-outline', t('privacy.onlineStatusDesc'))}
+          {renderToggleRow(t('privacy.profilePhoto'), 'profilePhoto', 'image-outline', t('privacy.profilePhotoDesc'))}
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Security</Text>
-          {renderToggleRow('Two‑Factor Authentication', 'twoFactorAuth', 'lock-closed-outline', 'Add an extra layer of security')}
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('privacy.security')}</T>
+          {renderToggleRow(t('privacy.twoFactorAuth'), 'twoFactorAuth', 'lock-closed-outline', t('privacy.twoFactorAuthDesc'))}
           <TouchableOpacity style={[styles.optionRow, { borderBottomColor: borderColor }]} onPress={() => handleAction('Change Password')}>
             <View style={styles.toggleLabel}>
               <Icon name="key-outline" size={20} color={secondaryText} />
-              <Text style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>Change Password</Text>
+              <T style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{t('privacy.changePassword')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={20} color={secondaryText} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.optionRow, { borderBottomColor: borderColor }]} onPress={() => handleAction('Blocked Users')}>
             <View style={styles.toggleLabel}>
               <Icon name="ban-outline" size={20} color={secondaryText} />
-              <Text style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>Blocked Users</Text>
+              <T style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{t('privacy.blockedUsers')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={20} color={secondaryText} />
           </TouchableOpacity>
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Active Sessions</Text>
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('privacy.activeSessions')}</T>
           {activeSessions.map((session, index) => renderSessionItem(session, index))}
           <TouchableOpacity style={styles.optionRow} onPress={() => handleAction('Log Out All Devices')}>
             <View style={styles.toggleLabel}>
               <Icon name="refresh-outline" size={20} color={secondaryText} />
-              <Text style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>Log Out All Devices</Text>
+              <T style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{t('devices.logoutAll')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={20} color={secondaryText} />
           </TouchableOpacity>
         </View>
 
         <View style={[styles.section, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.sectionTitle, { color: secondaryText }]}>Data & Privacy</Text>
+          <T style={[styles.sectionTitle, { color: secondaryText }]}>{t('privacy.dataAndPrivacy')}</T>
           <TouchableOpacity style={[styles.optionRow, { borderBottomColor: borderColor }]} onPress={() => handleAction('Download Data')}>
             <View style={styles.toggleLabel}>
               <Icon name="download-outline" size={20} color={secondaryText} />
-              <Text style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>Download My Data</Text>
+              <T style={[styles.toggleText, { color: textColor, marginLeft: 12 }]}>{t('privacy.downloadData')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={20} color={secondaryText} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.optionRow, { borderBottomColor: borderColor }]} onPress={() => handleAction('Delete Account')}>
             <View style={styles.toggleLabel}>
               <Icon name="trash-outline" size={20} color="#c0392b" />
-              <Text style={[styles.toggleText, { color: '#c0392b', marginLeft: 12 }]}>Delete Account</Text>
+              <T style={[styles.toggleText, { color: '#c0392b', marginLeft: 12 }]}>{t('privacy.deleteAccount')}</T>
             </View>
             <Icon name="chevron-forward-outline" size={20} color={secondaryText} />
           </TouchableOpacity>

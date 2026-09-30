@@ -18,6 +18,8 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import { getUserProfile } from '../../services/userService';
 
 const DEFAULT_AVATAR = require('../../../assets/icon.png');
@@ -72,6 +74,7 @@ const DIVISIONS = [
 export default function AccountScreen({ navigation }) {
   const { user } = useAuth();
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
 
   const [name, setName] = useState('');
@@ -134,7 +137,7 @@ export default function AccountScreen({ navigation }) {
   }, [user]);
 
   const handleSave = async () => {
-    Alert.alert('Save Profile', 'Feature coming soon!');
+    Alert.alert(t('account.save'), t('profile.featureComingSoon'));
   };
 
   const renderPickerModal = (title, data, selectedValue, onSelect, visible, setVisible) => (
@@ -142,7 +145,7 @@ export default function AccountScreen({ navigation }) {
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setVisible(false)}>
         <View style={[styles.modalContent, { backgroundColor: isDark ? '#1a1a2e' : '#ffffff' }]}>
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>{title}</Text>
+            <T style={[styles.modalTitle, { color: textColor }]}>{title}</T>
             <TouchableOpacity onPress={() => setVisible(false)}>
               <Icon name="close" size={24} color={secondaryText} />
             </TouchableOpacity>
@@ -165,7 +168,7 @@ export default function AccountScreen({ navigation }) {
                 }}
                 activeOpacity={0.7}
               >
-                <Text
+                <T
                   style={[
                     styles.modalItemText,
                     { color: selectedValue === item ? accentColor : textColor },
@@ -173,7 +176,7 @@ export default function AccountScreen({ navigation }) {
                   ]}
                 >
                   {item}
-                </Text>
+                </T>
                 {selectedValue === item && (
                   <Icon name="checkmark-circle" size={22} color={accentColor} />
                 )}
@@ -191,7 +194,7 @@ export default function AccountScreen({ navigation }) {
       <SafeAreaView style={[styles.container, { backgroundColor: bgColor }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={brandColor} />
-          <Text style={[styles.loadingText, { color: secondaryText }]}>Loading profile...</Text>
+          <T style={[styles.loadingText, { color: secondaryText }]}>{t('account.loading')}</T>
         </View>
       </SafeAreaView>
     );
@@ -205,16 +208,16 @@ export default function AccountScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Account</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('account.title')}</T>
         <TouchableOpacity onPress={handleSave} disabled={saving} style={styles.saveButton}>
-          <Text style={[styles.saveText, { color: brandColor, opacity: saving ? 0.5 : 1 }]}>
-            {saving ? 'Saving...' : 'Save'}
-          </Text>
+          <T style={[styles.saveText, { color: brandColor, opacity: saving ? 0.5 : 1 }]}>
+            {saving ? t('account.saving') : t('account.save')}
+          </T>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <TouchableOpacity style={styles.avatarWrapper} onPress={() => Alert.alert('Avatar', 'Changing avatar coming soon!')}>
+        <TouchableOpacity style={styles.avatarWrapper} onPress={() => Alert.alert('Avatar', t('profile.featureComingSoon'))}>
           <View style={[styles.avatarContainer, { borderColor: accentColor }]}>
             <Image
               source={avatar ? { uri: avatar } : DEFAULT_AVATAR}
@@ -225,20 +228,20 @@ export default function AccountScreen({ navigation }) {
               <Icon name="camera-outline" size={18} color="#ffffff" />
             </View>
           </View>
-          <Text style={[styles.changePhotoText, { color: secondaryText }]}>Tap to change photo</Text>
+          <T style={[styles.changePhotoText, { color: secondaryText }]}>{t('account.tapToChangePhoto')}</T>
         </TouchableOpacity>
 
         <View style={[styles.formCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="id-card-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Staff ID</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.staffId')}</T>
             </View>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
               value={staffId}
               onChangeText={setStaffId}
-              placeholder="e.g., SSGI-2025-001"
+              placeholder={t('account.placeholderStaffId')}
               placeholderTextColor={secondaryText}
             />
           </View>
@@ -246,13 +249,13 @@ export default function AccountScreen({ navigation }) {
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="person-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Full Name</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.fullName')}</T>
             </View>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
               value={name}
               onChangeText={setName}
-              placeholder="Enter your full name"
+              placeholder={t('account.placeholderName')}
               placeholderTextColor={secondaryText}
             />
           </View>
@@ -260,13 +263,13 @@ export default function AccountScreen({ navigation }) {
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="mail-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Email</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.email')}</T>
             </View>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
               value={email}
               onChangeText={setEmail}
-              placeholder="Enter your email"
+              placeholder={t('account.placeholderEmail')}
               placeholderTextColor={secondaryText}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -276,13 +279,13 @@ export default function AccountScreen({ navigation }) {
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="business-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Department</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.department')}</T>
             </View>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
               value={department}
               onChangeText={setDepartment}
-              placeholder="e.g., Geospatial Division"
+              placeholder={t('account.placeholderDept')}
               placeholderTextColor={secondaryText}
             />
           </View>
@@ -290,13 +293,13 @@ export default function AccountScreen({ navigation }) {
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="briefcase-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Role / Title</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.role')}</T>
             </View>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
               value={role}
               onChangeText={setRole}
-              placeholder="e.g., Geospatial Analyst"
+              placeholder={t('account.placeholderRole')}
               placeholderTextColor={secondaryText}
             />
           </View>
@@ -304,12 +307,12 @@ export default function AccountScreen({ navigation }) {
           <TouchableOpacity style={styles.formGroup} onPress={() => setShowResearchModal(true)} activeOpacity={0.7}>
             <View style={styles.labelRow}>
               <Icon name="flask-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Research Area</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.researchArea')}</T>
             </View>
             <View style={[styles.pickerField, { borderBottomColor: borderColor }]}>
-              <Text style={[styles.pickerText, { color: researchArea ? textColor : secondaryText }]}>
-                {researchArea || 'Select research area...'}
-              </Text>
+              <T style={[styles.pickerText, { color: researchArea ? textColor : secondaryText }]}>
+                {researchArea || t('account.selectResearch')}
+              </T>
               <Icon name="chevron-down" size={20} color={secondaryText} />
             </View>
           </TouchableOpacity>
@@ -317,12 +320,12 @@ export default function AccountScreen({ navigation }) {
           <TouchableOpacity style={styles.formGroup} onPress={() => setShowDivisionModal(true)} activeOpacity={0.7}>
             <View style={styles.labelRow}>
               <Icon name="layers-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Division</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.division')}</T>
             </View>
             <View style={[styles.pickerField, { borderBottomColor: borderColor }]}>
-              <Text style={[styles.pickerText, { color: division ? textColor : secondaryText }]}>
-                {division || 'Select division...'}
-              </Text>
+              <T style={[styles.pickerText, { color: division ? textColor : secondaryText }]}>
+                {division || t('account.selectDivision')}
+              </T>
               <Icon name="chevron-down" size={20} color={secondaryText} />
             </View>
           </TouchableOpacity>
@@ -330,13 +333,13 @@ export default function AccountScreen({ navigation }) {
           <View style={styles.formGroup}>
             <View style={styles.labelRow}>
               <Icon name="text-outline" size={16} color={accentColor} />
-              <Text style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>Bio / About Me</Text>
+              <T style={[styles.label, { color: secondaryText, marginLeft: 6 }]}>{t('account.bio')}</T>
             </View>
             <TextInput
               style={[styles.bioInput, { color: textColor, borderColor: borderColor }]}
               value={bio}
               onChangeText={setBio}
-              placeholder="Tell us about yourself..."
+              placeholder={t('account.placeholderBio')}
               placeholderTextColor={secondaryText}
               multiline
               numberOfLines={3}
@@ -347,14 +350,14 @@ export default function AccountScreen({ navigation }) {
 
         <View style={styles.noteContainer}>
           <Icon name="information-circle-outline" size={18} color={secondaryText} />
-          <Text style={[styles.noteText, { color: secondaryText, marginLeft: 8 }]}>
-            Changes will be saved to your profile.
-          </Text>
+          <T style={[styles.noteText, { color: secondaryText, marginLeft: 8 }]}>
+            {t('account.note')}
+          </T>
         </View>
       </ScrollView>
 
       {renderPickerModal(
-        'Select Research Area',
+        t('account.selectResearchModal'),
         RESEARCH_AREAS,
         researchArea,
         setResearchArea,
@@ -363,7 +366,7 @@ export default function AccountScreen({ navigation }) {
       )}
 
       {renderPickerModal(
-        'Select Division',
+        t('account.selectDivisionModal'),
         DIVISIONS,
         division,
         setDivision,

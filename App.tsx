@@ -1,4 +1,6 @@
-﻿import React, { useEffect, useState } from 'react';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['This method is deprecated', 'SafeAreaView has been deprecated']);
+import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

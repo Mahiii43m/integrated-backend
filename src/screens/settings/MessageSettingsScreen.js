@@ -16,6 +16,8 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const { width } = Dimensions.get('window');
 const STORAGE_KEY = 'message_settings';
@@ -41,6 +43,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function MessageSettingsScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t } = useTranslation();
   const isDark = theme === 'dark';
   const [settings, setSettings] = useState({
     fontSize: 'medium',
@@ -77,8 +80,8 @@ export default function MessageSettingsScreen({ navigation }) {
       <View style={styles.toggleLabel}>
         <Icon name={icon} size={18} color={accentColor} />
         <View style={{ marginLeft: 12, flex: 1 }}>
-          <Text style={[styles.toggleText, { color: textColor }]}>{label}</Text>
-          {description && <Text style={[styles.toggleDescription, { color: secondaryText }]}>{description}</Text>}
+          <T style={[styles.toggleText, { color: textColor }]}>{label}</T>
+          {description && <T style={[styles.toggleDescription, { color: secondaryText }]}>{description}</T>}
         </View>
       </View>
       <Switch
@@ -99,56 +102,56 @@ export default function MessageSettingsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: textColor }]}>Message Settings</Text>
+        <T style={[styles.headerTitle, { color: textColor }]}>{t('settings.messageSettings')}</T>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={[styles.infoCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
           <Icon name="chatbubble-ellipses-outline" size={18} color={goldAccent} />
-          <Text style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
-            Customise how you compose and send messages.
-          </Text>
+          <T style={[styles.infoText, { color: secondaryText, marginLeft: 10 }]}>
+            {t('messageSettings.info')}
+          </T>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Font Size</Text>
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('messageSettings.fontSize')}</T>
           <TouchableOpacity style={styles.optionRow} onPress={() => setModalVisible(true)}>
             <View style={styles.optionLeft}>
               <Icon name="text-outline" size={18} color={accentColor} />
-              <Text style={[styles.optionText, { color: textColor, marginLeft: 12 }]}>Message Font Size</Text>
+              <T style={[styles.optionText, { color: textColor, marginLeft: 12 }]}>{t('messageSettings.messageFontSize')}</T>
             </View>
             <View style={styles.optionRight}>
-              <Text style={[styles.optionValue, { color: secondaryText }]}>{settings.fontSize.charAt(0).toUpperCase() + settings.fontSize.slice(1)}</Text>
+              <T style={[styles.optionValue, { color: secondaryText }]}>{t(`messageSettings.${settings.fontSize}`)}</T>
               <Icon name="chevron-forward-outline" size={16} color={secondaryText} />
             </View>
           </TouchableOpacity>
         </View>
 
         <View style={[styles.card, { backgroundColor: cardColor, borderColor: borderColor }]}>
-          <Text style={[styles.cardTitle, { color: secondaryText }]}>Behavior</Text>
-          {renderToggleRow('Enter to Send', 'enterToSend', 'return-down-back-outline', 'Press Enter to send a message')}
-          {renderToggleRow('Double‑tap to Reply', 'doubleTapReply', 'hand-left-outline', 'Double‑tap a message to reply')}
-          {renderToggleRow('Show Typing Indicators', 'typingIndicators', 'ellipsis-horizontal-outline', 'Show when others are typing')}
-          {renderToggleRow('Auto‑Correct', 'autoCorrect', 'checkmark-circle-outline', 'Enable auto‑correct in input')}
+          <T style={[styles.cardTitle, { color: secondaryText }]}>{t('chatSettings.behavior')}</T>
+          {renderToggleRow(t('chatSettings.enterToSend'), 'enterToSend', 'return-down-back-outline', t('chatSettings.enterToSendDesc'))}
+          {renderToggleRow(t('chatSettings.doubleTapReply'), 'doubleTapReply', 'hand-left-outline', t('chatSettings.doubleTapReplyDesc'))}
+          {renderToggleRow(t('messageSettings.typingIndicators'), 'typingIndicators', 'ellipsis-horizontal-outline', t('messageSettings.typingIndicatorsDesc'))}
+          {renderToggleRow(t('messageSettings.autoCorrect'), 'autoCorrect', 'checkmark-circle-outline', t('messageSettings.autoCorrectDesc'))}
         </View>
       </ScrollView>
 
       <Modal transparent animationType="fade" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setModalVisible(false)}>
           <View style={[styles.modalContent, { backgroundColor: isDark ? '#1e1e30' : '#ffffff' }]}>
-            <Text style={[styles.modalTitle, { color: textColor }]}>Select Font Size</Text>
-            {['Small', 'Medium', 'Large'].map((label) => (
+            <T style={[styles.modalTitle, { color: textColor }]}>{t('messageSettings.selectFontSize')}</T>
+            {['small', 'medium', 'large'].map((sizeKey) => (
               <TouchableOpacity
-                key={label}
+                key={sizeKey}
                 style={styles.modalOption}
                 onPress={() => {
-                  setSettings({ ...settings, fontSize: label.toLowerCase() });
+                  setSettings({ ...settings, fontSize: sizeKey });
                   setModalVisible(false);
                 }}
               >
-                <Text style={[styles.modalOptionText, { color: textColor }]}>{label}</Text>
-                {settings.fontSize === label.toLowerCase() && (
+                <T style={[styles.modalOptionText, { color: textColor }]}>{t(`messageSettings.${sizeKey}`)}</T>
+                {settings.fontSize === sizeKey && (
                   <Icon name="checkmark-circle" size={20} color={accentColor} />
                 )}
               </TouchableOpacity>

@@ -31,7 +31,7 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const systemScheme = useColorScheme();
 
-  const [themeMode, setThemeMode] = useState('system');
+  const [themeMode, setThemeMode] = useState('dark');
   const [preset, setPreset] = useState('ssgiBlue');
   const [accentColor, setAccentColor] = useState(null);
 

@@ -10,6 +10,8 @@ import {
   StatusBar,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -62,17 +64,19 @@ const TYPE_COLORS = {
 };
 
 export default function NotificationsScreen({ navigation }) {
+  const { t } = useTranslation();
+
   const renderItem = ({ item }) => {
     const badgeColor = TYPE_COLORS[item.type] || '#1B5674';
     return (
       <View style={styles.notificationCard}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardDate}>{item.date}</Text>
+          <T style={styles.cardTitle}>{item.title}</T>
+          <T style={styles.cardDate}>{item.date}</T>
         </View>
-        <Text style={styles.cardSummary}>{item.summary}</Text>
+        <T style={styles.cardSummary}>{item.summary}</T>
         <View style={[styles.typeBadge, { backgroundColor: badgeColor + '20' }]}>
-          <Text style={[styles.typeText, { color: badgeColor }]}>{item.type.toUpperCase()}</Text>
+          <T style={[styles.typeText, { color: badgeColor }]}>{item.type.toUpperCase()}</T>
         </View>
       </View>
     );
@@ -85,7 +89,7 @@ export default function NotificationsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={26} color="#ffffff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <T style={styles.headerTitle}>{t('settings.notifications')}</T>
         <View style={styles.headerRightSpacer} />
       </View>
 
@@ -98,7 +102,7 @@ export default function NotificationsScreen({ navigation }) {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Icon name="notifications-off-outline" size={48} color="#8a8a8a" />
-            <Text style={styles.emptyText}>No new notifications</Text>
+            <T style={styles.emptyText}>{t('chats.noNotifications')}</T>
           </View>
         }
       />

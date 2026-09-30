@@ -11,12 +11,15 @@ import {
 } from 'react-native';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import { getAllUsers } from '../../services/userService';
 import { createDirectChat } from '../../services/chatService';
 
 export default function ContactsScreen({ navigation }) {
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchEmail, setSearchEmail] = useState('');
@@ -40,7 +43,6 @@ export default function ContactsScreen({ navigation }) {
   };
 
   useEffect(() => {
-    // Optionally load some initial suggested users
     const loadInitial = async () => {
       setLoading(true);
       const allUsers = await getAllUsers();
@@ -68,13 +70,13 @@ export default function ContactsScreen({ navigation }) {
       onPress={() => handleStartChat(item)}
     >
       <View style={styles.avatarPlaceholder}>
-        <Text style={styles.avatarText}>
+        <T style={styles.avatarText}>
           {(item.fullName || 'U').substring(0, 1).toUpperCase()}
-        </Text>
+        </T>
       </View>
       <View style={styles.userInfo}>
-        <Text style={[styles.userName, { color: colors.text }]}>{item.fullName || 'Unknown'}</Text>
-        <Text style={[styles.userEmail, { color: colors.rowTime }]}>{item.email}</Text>
+        <T style={[styles.userName, { color: colors.text }]}>{item.fullName || 'Unknown'}</T>
+        <T style={[styles.userEmail, { color: colors.rowTime }]}>{item.email}</T>
       </View>
     </TouchableOpacity>
   );
@@ -90,20 +92,20 @@ export default function ContactsScreen({ navigation }) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.headerBg }]}>
-        <Text style={styles.headerTitle}>Find People</Text>
+        <T style={styles.headerTitle}>{t('chats.findPeople')}</T>
       </View>
 
       <View style={styles.searchContainer}>
         <TextInput
           style={[styles.searchInput, { color: colors.text, borderColor: colors.border }]}
-          placeholder="Search by name or email..."
+          placeholder={t('chats.searchPlaceholderContacts')}
           placeholderTextColor={colors.rowTime}
           value={searchEmail}
           onChangeText={setSearchEmail}
           autoCapitalize="none"
         />
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Text style={styles.searchButtonText}>Search</Text>
+          <T style={styles.searchButtonText}>{t('chats.search')}</T>
         </TouchableOpacity>
       </View>
 
@@ -118,7 +120,7 @@ export default function ContactsScreen({ navigation }) {
           renderItem={renderItem}
           ListEmptyComponent={
             <View style={styles.centered}>
-              <Text style={{ color: colors.rowTime }}>No users found</Text>
+              <T style={{ color: colors.rowTime }}>{t('chats.noUsersFound')}</T>
             </View>
           }
         />

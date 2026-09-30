@@ -2,6 +2,8 @@
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -16,6 +18,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 
 export default function CallsScreen({ navigation }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const bg = colors?.background || '#ffffff';
   const text = colors?.text || '#111111';
   const secondary = colors?.rowTime || '#888888';
@@ -27,7 +30,7 @@ export default function CallsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Icon name="chevron-back-outline" size={26} color={text} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: text }]}>Calls</Text>
+        <T style={[styles.title, { color: text }]}>{t('chats.calls')}</T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -35,10 +38,10 @@ export default function CallsScreen({ navigation }) {
         <View style={[styles.iconCircle, { backgroundColor: primary + '15' }]}>
           <Icon name="call-outline" size={56} color={primary} />
         </View>
-        <Text style={[styles.emptyTitle, { color: text }]}>No calls yet</Text>
-        <Text style={[styles.emptySubtitle, { color: secondary }]}>
-          Your call history will appear here
-        </Text>
+        <T style={[styles.emptyTitle, { color: text }]}>{t('chats.noCallsYet')}</T>
+        <T style={[styles.emptySubtitle, { color: secondary }]}>
+          {t('chats.callHistory')}
+        </T>
       </View>
     </SafeAreaView>
   );

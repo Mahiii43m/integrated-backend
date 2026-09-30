@@ -1,6 +1,5 @@
-﻿import { useState, useEffect, useCallback } from 'react';
-import i18n from 'i18next';
-import { initReactI18next, setI18n } from 'react-i18next';
+﻿import i18n from 'i18next';
+import { initReactI18next, setI18n, useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import en from './en.json';
 import am from './am.json';
@@ -12,7 +11,12 @@ setI18n(i18n);
 let initPromise = null;
 
 export const initI18n = async () => {
-  if (i18n.isInitialized) return true;
+  if (i18n.isInitialized) {
+    // Update resource bundles with latest translations in memory
+    i18n.addResourceBundle('en', 'translation', en, true, true);
+    i18n.addResourceBundle('am', 'translation', am, true, true);
+    return true;
+  }
   if (!initPromise) {
     initPromise = (async () => {
       let lng = 'en';
@@ -58,22 +62,5 @@ export const changeLanguage = async (lang) => {
   }
 };
 
-export function useTranslation() {
-  const [lang, setLang] = useState(i18n.language || 'en');
-
-  useEffect(() => {
-    const handleChanged = (l) => setLang(l);
-    i18n.on('languageChanged', handleChanged);
-    return () => {
-      i18n.off('languageChanged', handleChanged);
-    };
-  }, []);
-
-  const t = useCallback((key, options) => {
-    return i18n.t(key, options);
-  }, [lang]);
-
-  return { t, i18n };
-}
-
+export { useTranslation };
 export default i18n;

@@ -15,7 +15,7 @@ const Typography = ({
 }) => {
   const { colors } = useTheme();
   const { i18n } = useTranslation();
-  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
+  const isAmharic = i18n?.language === 'am' || i18n?.language?.startsWith('am');
   const textColor = color || colors.text || '#ffffff';
   const amharicFont = isAmharic ? { fontFamily: 'NotoSansEthiopic-Regular' } : null;
 

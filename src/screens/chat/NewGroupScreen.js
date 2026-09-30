@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import Typography from '../../components/Typography';
 import { SPACING, RADIUS } from '../../constants/Typography';
 import firestore from '@react-native-firebase/firestore';
@@ -34,12 +36,20 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   );
 };
 
-const DEPARTMENTS = ['Space Science', 'Geospatial Division', 'Research', 'Operations', 'Support'];
-
 export default function NewGroupScreen({ navigation }) {
   const { colors, theme } = useTheme();
+  const { t, i18n } = useTranslation();
   const isDark = theme === 'dark';
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
   const { user } = useAuth();
+
+  const DEPARTMENTS = [
+    { id: 'Space Science', label: isAmharic ? 'የጠፈር ሳይንስ' : 'Space Science' },
+    { id: 'Geospatial Division', label: isAmharic ? 'ጂኦስፓሻል ዘርፍ' : 'Geospatial Division' },
+    { id: 'Research', label: isAmharic ? 'ምርምር' : 'Research' },
+    { id: 'Operations', label: isAmharic ? 'ኦፕሬሽንስ' : 'Operations' },
+    { id: 'Support', label: isAmharic ? 'ድጋፍ' : 'Support' },
+  ];
 
   const [activeTab, setActiveTab] = useState('create'); // 'create' or 'addMembers'
   const [groupName, setGroupName] = useState('');
@@ -93,11 +103,11 @@ export default function NewGroupScreen({ navigation }) {
 
   const createGroup = async () => {
     if (!groupName.trim()) {
-      Alert.alert('Error', 'Please enter a group name.');
+      Alert.alert('Error', isAmharic ? 'እባክዎን የቡድን ስም ያስገቡ።' : 'Please enter a group name.');
       return;
     }
     if (!selectedDepartment) {
-      Alert.alert('Error', 'Please select a department.');
+      Alert.alert('Error', isAmharic ? 'እባክዎን ክፍል ይምረጡ።' : 'Please select a department.');
       return;
     }
     if (!user?.uid) return;
@@ -129,7 +139,7 @@ export default function NewGroupScreen({ navigation }) {
       });
     } catch (error) {
       console.error('Failed to create group:', error);
-      Alert.alert('Error', 'Could not create the group. Please try again.');
+      Alert.alert('Error', isAmharic ? 'ቡድኑን መፍጠር አልተቻለም።' : 'Could not create the group. Please try again.');
       setCreating(false);
     }
   };
@@ -142,11 +152,11 @@ export default function NewGroupScreen({ navigation }) {
         onPress={() => toggleUserSelection(item.id)}
       >
         <View style={[styles.userAvatar, { backgroundColor: brandColor }]}>
-          <Text style={styles.avatarText}>{(item.fullName || 'U').charAt(0).toUpperCase()}</Text>
+          <T style={styles.avatarText}>{(item.fullName || 'U').charAt(0).toUpperCase()}</T>
         </View>
         <View style={styles.userInfo}>
-          <Typography variant="body" color={textColor}>{item.fullName || 'Unnamed'}</Typography>
-          <Typography variant="caption" color={secondaryText}>{item.email}</Typography>
+          <T style={{ fontSize: 16, color: textColor }}>{item.fullName || 'Unnamed'}</T>
+          <T style={{ fontSize: 13, color: secondaryText }}>{item.email}</T>
         </View>
         <Icon
           name={isSelected ? 'checkmark-circle' : 'ellipse-outline'}
@@ -165,9 +175,9 @@ export default function NewGroupScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="chevron-back-outline" size={28} color={textColor} />
         </TouchableOpacity>
-        <Typography variant="heading3" color={textColor} style={styles.headerTitle}>
-          New Group
-        </Typography>
+        <T style={[styles.headerTitle, { color: textColor }]}>
+          {t('chats.newGroupTitle')}
+        </T>
         <View style={{ width: 40 }} />
       </View>
 
@@ -176,23 +186,23 @@ export default function NewGroupScreen({ navigation }) {
           style={[styles.tab, activeTab === 'create' && { borderBottomColor: brandColor }]}
           onPress={() => setActiveTab('create')}
         >
-          <Typography variant="body" color={activeTab === 'create' ? brandColor : secondaryText}>Create</Typography>
+          <T style={{ color: activeTab === 'create' ? brandColor : secondaryText, fontSize: 15 }}>{t('chats.createTab')}</T>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'addMembers' && { borderBottomColor: brandColor }]}
           onPress={() => setActiveTab('addMembers')}
         >
-          <Typography variant="body" color={activeTab === 'addMembers' ? brandColor : secondaryText}>Add Members</Typography>
+          <T style={{ color: activeTab === 'addMembers' ? brandColor : secondaryText, fontSize: 15 }}>{t('chats.addMembersTab')}</T>
         </TouchableOpacity>
       </View>
 
       {activeTab === 'create' ? (
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={[styles.inputCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-            <Typography variant="label" color={secondaryText}>GROUP NAME</Typography>
+            <T style={{ fontSize: 12, fontWeight: 'bold', color: secondaryText }}>{t('chats.groupNameLabel')}</T>
             <TextInput
               style={[styles.input, { color: textColor, borderBottomColor: borderColor }]}
-              placeholder="Enter group name"
+              placeholder={isAmharic ? "የቡድን ስም ያስገቡ" : "Enter group name"}
               placeholderTextColor={secondaryText}
               value={groupName}
               onChangeText={setGroupName}
@@ -201,25 +211,22 @@ export default function NewGroupScreen({ navigation }) {
           </View>
 
           <View style={[styles.inputCard, { backgroundColor: cardColor, borderColor: borderColor }]}>
-            <Typography variant="label" color={secondaryText}>DEPARTMENT</Typography>
+            <T style={{ fontSize: 12, fontWeight: 'bold', color: secondaryText }}>{t('chats.departmentLabel')}</T>
             <View style={styles.deptContainer}>
               {DEPARTMENTS.map((dept) => (
                 <TouchableOpacity
-                  key={dept}
+                  key={dept.id}
                   style={[
                     styles.deptChip,
-                    { backgroundColor: selectedDepartment === dept ? brandColor : 'rgba(255,255,255,0.05)', borderColor: borderColor },
+                    { backgroundColor: selectedDepartment === dept.id ? brandColor : 'rgba(255,255,255,0.05)', borderColor: borderColor },
                   ]}
-                  onPress={() => toggleDepartment(dept)}
+                  onPress={() => toggleDepartment(dept.id)}
                   activeOpacity={0.7}
                   disabled={creating}
                 >
-                  <Typography
-                    variant="caption"
-                    color={selectedDepartment === dept ? '#ffffff' : secondaryText}
-                  >
-                    {dept}
-                  </Typography>
+                  <T style={{ fontSize: 13, color: selectedDepartment === dept.id ? '#ffffff' : secondaryText }}>
+                    {dept.label}
+                  </T>
                 </TouchableOpacity>
               ))}
             </View>
@@ -229,12 +236,12 @@ export default function NewGroupScreen({ navigation }) {
             style={[styles.inputCard, { backgroundColor: cardColor, borderColor: borderColor }]}
             onPress={() => setActiveTab('addMembers')}
           >
-            <Typography variant="label" color={secondaryText}>SELECTED MEMBERS ({selectedUserIds.length})</Typography>
+            <T style={{ fontSize: 12, fontWeight: 'bold', color: secondaryText }}>{t('chats.selectedMembersLabel')} ({selectedUserIds.length})</T>
             <View style={styles.addMembersBtn}>
               <Icon name="person-add-outline" size={20} color={accentColor} />
-              <Typography variant="body" color={accentColor} style={styles.addMembersText}>
-                {selectedUserIds.length > 0 ? 'Edit selection' : 'Add members now'}
-              </Typography>
+              <T style={[styles.addMembersText, { color: accentColor }]}>
+                {selectedUserIds.length > 0 ? (isAmharic ? 'ምርጫን አርትዕ' : 'Edit selection') : (isAmharic ? 'አባላትን አሁን አክል' : 'Add members now')}
+              </T>
             </View>
           </TouchableOpacity>
 
@@ -247,7 +254,7 @@ export default function NewGroupScreen({ navigation }) {
             {creating ? (
               <ActivityIndicator color="#ffffff" />
             ) : (
-              <Text style={styles.mainCreateButtonText}>CREATE GROUP</Text>
+              <T style={styles.mainCreateButtonText}>{t('chats.createGroupBtn')}</T>
             )}
           </TouchableOpacity>
         </ScrollView>
@@ -262,7 +269,7 @@ export default function NewGroupScreen({ navigation }) {
               keyExtractor={item => item.id}
               contentContainerStyle={styles.membersList}
               ListEmptyComponent={
-                <Typography variant="body" color={secondaryText} style={{ textAlign: 'center', marginTop: 20 }}>No users found</Typography>
+                <T style={{ textAlign: 'center', marginTop: 20, color: secondaryText }}>{t('chats.noUsersFound')}</T>
               }
             />
           )}
@@ -272,7 +279,7 @@ export default function NewGroupScreen({ navigation }) {
             onPress={() => setActiveTab('create')}
             activeOpacity={0.9}
           >
-            <Text style={styles.floatingCreateButtonText}>Confirm Selection ({selectedUserIds.length})</Text>
+            <T style={styles.floatingCreateButtonText}>{t('chats.confirmSelectionBtn')} ({selectedUserIds.length})</T>
           </TouchableOpacity>
         </View>
       )}
@@ -291,7 +298,7 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.sm,
   },
   backButton: { padding: 8, width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { flex: 1, textAlign: 'center' },
+  headerTitle: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' },
   tabContainer: {
     flexDirection: 'row',
     borderBottomWidth: 1,

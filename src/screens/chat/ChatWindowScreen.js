@@ -22,6 +22,8 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { pick, types, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import Sound from 'react-native-nitro-sound';
 import { useTheme } from '../../firebase/context/ThemeContext';
+import { useTranslation } from '../../i18n';
+import T from '../../components/T';
 import Typography from '../../components/Typography';
 import { SPACING, RADIUS } from '../../constants/Typography';
 import { useAuth } from '../../firebase/context/AuthContext';
@@ -57,19 +59,11 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
   );
 };
 
-// Decision Enablers Data
-const DECISION_ENABLERS = [
-  { id: 'edas', icon: 'location-outline', title: 'eDAS Address Lookup', description: 'Find digital addresses in 73 Ethiopian cities', action: () => Alert.alert('eDAS Lookup', 'Search for digital addresses by city') },
-  { id: 'satellite', icon: 'satellite-outline', title: 'Satellite CORS Network', description: '9 operational stations - 30 more planned', action: () => Alert.alert('Satellite CORS', 'View live satellite data network status.') },
-  { id: 'research', icon: 'document-text-outline', title: 'Research Publications', description: 'Latest papers from S-ARC 2026 conference', action: () => Alert.alert('Publications', 'Browse research papers.') },
-  { id: 'disaster', icon: 'warning-outline', title: 'Disaster Risk Alerts', description: 'Flood - Landslide - Earthquake monitoring', action: () => Alert.alert('Disaster Alerts', 'View current disaster risk data.') },
-  { id: 'maps', icon: 'map-outline', title: 'Geospatial Data Maps', description: 'Urban planning - Agriculture - Water resources', action: () => Alert.alert('Geospatial Maps', 'Open interactive map viewer.') },
-  { id: 'training', icon: 'school-outline', title: 'Training Programs', description: 'Journey to the Space - SciGirls - Radio Astronomy', action: () => Alert.alert('Training', 'View upcoming training programs.') },
-];
-
 export default function ChatWindowScreen({ route, navigation }) {
   const { colors, theme } = useTheme();
+  const { t, i18n } = useTranslation();
   const isDark = theme === 'dark';
+  const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
   const { chatId, contactName, contactUid, groupDetails } = route.params || { contactName: 'Contact' };
   const { user } = useAuth();
   const [showInfoModal, setShowInfoModal] = useState(false);
@@ -204,17 +198,17 @@ export default function ChatWindowScreen({ route, navigation }) {
       <View style={[styles.messageRow, isMe ? styles.messageRowMe : styles.messageRowThem]}>
         {!isMe && (
           <View style={[styles.miniAvatar, { backgroundColor: cardColor }, isSenderAdmin && { backgroundColor: accentColor }]}>
-            <Text style={[styles.miniAvatarText, { color: isSenderAdmin ? '#ffffff' : secondaryText }]}>
+            <T style={[styles.miniAvatarText, { color: isSenderAdmin ? '#ffffff' : secondaryText }]}>
               {senderDisplayName.substring(0, 1).toUpperCase()}
-            </Text>
+            </T>
           </View>
         )}
         <View style={[styles.bubble, isMe ? [styles.bubbleMe, { backgroundColor: brandColor }] : [styles.bubbleThem, { backgroundColor: cardColor }]]}>
           {isGroup && !isMe && (
-            <Text style={[styles.senderNameText, { color: isSenderAdmin ? accentColor : brandColor }]}>{senderDisplayName}</Text>
+            <T style={[styles.senderNameText, { color: isSenderAdmin ? accentColor : brandColor }]}>{senderDisplayName}</T>
           )}
 
-          {item.type === 'text' && <Text style={{ color: isMe ? '#ffffff' : textColor, fontSize: 14 }}>{item.text}</Text>}
+          {item.type === 'text' && <T style={{ color: isMe ? '#ffffff' : textColor, fontSize: 14 }}>{item.text}</T>}
 
           {item.type === 'image' && (
             <Image source={{ uri: item.attachmentUrl }} style={styles.messageImage} resizeMode="cover" />
@@ -223,7 +217,7 @@ export default function ChatWindowScreen({ route, navigation }) {
           {(item.type === 'file' || item.type === 'video') && (
             <TouchableOpacity style={styles.fileAttachment} onPress={() => Linking.openURL(item.attachmentUrl)}>
               <Icon name="document-text-outline" size={24} color={isMe ? '#fff' : brandColor} />
-              <Text style={{ color: isMe ? '#fff' : textColor, marginLeft: 8, fontSize: 12 }}>{item.attachmentName || 'Attachment'}</Text>
+              <T style={{ color: isMe ? '#fff' : textColor, marginLeft: 8, fontSize: 12 }}>{item.attachmentName || t('chat.attachment')}</T>
             </TouchableOpacity>
           )}
 
@@ -231,13 +225,13 @@ export default function ChatWindowScreen({ route, navigation }) {
             <TouchableOpacity style={styles.voiceAttachment} onPress={() => Linking.openURL(item.attachmentUrl)}>
               <Icon name="play-outline" size={20} color={isMe ? '#fff' : brandColor} />
               <View style={[styles.voiceWaveform, { backgroundColor: isMe ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)' }]} />
-              <Text style={{ color: isMe ? '#fff' : secondaryText, fontSize: 10, marginLeft: 8 }}>Voice</Text>
+              <T style={{ color: isMe ? '#fff' : secondaryText, fontSize: 10, marginLeft: 8 }}>{t('chat.voice')}</T>
             </TouchableOpacity>
           )}
 
-          <Text style={{ color: isMe ? 'rgba(255,255,255,0.7)' : secondaryText, fontSize: 9, textAlign: 'right', marginTop: 4 }}>
+          <T style={{ color: isMe ? 'rgba(255,255,255,0.7)' : secondaryText, fontSize: 9, textAlign: 'right', marginTop: 4 }}>
             {formatMessageTime(item.createdAt)}
-          </Text>
+          </T>
         </View>
       </View>
     );
@@ -253,19 +247,19 @@ export default function ChatWindowScreen({ route, navigation }) {
             <Icon name="chevron-back-outline" size={28} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerTitleContainer} onPress={() => setShowInfoModal(true)} activeOpacity={0.7}>
-            <Text style={styles.headerTitle}>{contactName}</Text>
-            <Text style={styles.headerSubtitle}>{groupDetails ? `${groupDetails.participants?.length || 0} members` : 'online'}</Text>
+            <T style={styles.headerTitle}>{contactName}</T>
+            <T style={styles.headerSubtitle}>{groupDetails ? `${groupDetails.participants?.length || 0} ${t('chat.members')}` : t('chat.online')}</T>
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity
-              onPress={() => Alert.alert('Voice Call', 'Call feature coming soon.')}
+              onPress={() => Alert.alert(t('chat.call'), 'Call feature coming soon.')}
               style={{ padding: 6, marginRight: 4 }}
               activeOpacity={0.7}
             >
               <Icon name="call-outline" size={22} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => Alert.alert('Video Call', 'Video call feature coming soon.')}
+              onPress={() => Alert.alert(t('chat.videoCall'), 'Video call feature coming soon.')}
               style={{ padding: 6 }}
               activeOpacity={0.7}
             >
@@ -285,7 +279,7 @@ export default function ChatWindowScreen({ route, navigation }) {
         {uploading && (
           <View style={styles.uploadingOverlay}>
             <ActivityIndicator color={brandColor} />
-            <Text style={{ color: brandColor, marginLeft: 10 }}>Uploading attachment...</Text>
+            <T style={{ color: brandColor, marginLeft: 10 }}>{t('chat.uploading')}</T>
           </View>
         )}
 
@@ -300,7 +294,7 @@ export default function ChatWindowScreen({ route, navigation }) {
               </TouchableOpacity>
               <TextInput
                 style={[styles.input, { backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : '#f0f2f5', color: textColor }]}
-                placeholder="Message..."
+                placeholder={t('chat.messagePlaceholder')}
                 placeholderTextColor={secondaryText}
                 value={inputText}
                 onChangeText={setInputText}
@@ -318,7 +312,7 @@ export default function ChatWindowScreen({ route, navigation }) {
           ) : (
             <View style={styles.recordingContainer}>
               <Icon name="mic-outline" size={20} color="#ff4d4d" />
-              <Text style={styles.recordingTimer}>{recordTime}</Text>
+              <T style={styles.recordingTimer}>{recordTime}</T>
               <View style={styles.recordingWave} />
               <TouchableOpacity onPress={stopRecording} style={styles.stopBtn}>
                 <Icon name="stop-circle-outline" size={32} color="#ff4d4d" />
@@ -369,19 +363,4 @@ const styles = StyleSheet.create({
   recordingWave: { flex: 1, height: 2, backgroundColor: '#ff4d4d', marginHorizontal: 20, opacity: 0.3 },
   stopBtn: { padding: 5 },
   uploadingOverlay: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10, backgroundColor: 'rgba(255,255,255,0.9)' },
-  infoOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  infoCard: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingTop: 32, alignItems: 'center' },
-  infoClose: { position: 'absolute', top: 14, right: 14, padding: 6, zIndex: 10 },
-  infoAvatar: { width: 90, height: 90, borderRadius: 45, justifyContent: 'center', alignItems: 'center', marginBottom: 14 },
-  infoAvatarText: { fontSize: 36, fontWeight: 'bold', color: '#ffffff' },
-  infoName: { fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
-  infoRole: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
-  infoStatus: { fontSize: 13, marginBottom: 10 },
-  infoBio: { fontSize: 14, textAlign: 'center', lineHeight: 20, marginTop: 10, marginBottom: 14, paddingHorizontal: 10 },
-  infoRow: { flexDirection: 'row', width: '100%', paddingVertical: 8, justifyContent: 'space-between' },
-  infoLabel: { fontSize: 13, fontWeight: '600' },
-  infoValue: { fontSize: 13, flex: 1, textAlign: 'right', marginLeft: 12 },
-  infoActions: { flexDirection: 'row', marginTop: 20, gap: 14 },
-  infoActionBtn: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, paddingHorizontal: 26, borderRadius: 16, gap: 6 },
-  infoActionText: { fontSize: 12, fontWeight: '600' },
 });
