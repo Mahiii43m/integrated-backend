@@ -62,7 +62,7 @@ export default function PrivacySecurityScreen({ navigation }) {
   const goldAccent = '#de994a';
 
   const [activeSessions] = useState([
-    { device: 'iPhone 15 Pro', location: 'Addis Ababa', lastActive: 'Now' },
+    { device: 'Google Pixel 8 Pro', location: 'Addis Ababa', lastActive: 'Now' },
     { device: 'MacBook Pro', location: 'Addis Ababa', lastActive: '2 hours ago' },
   ]);
 

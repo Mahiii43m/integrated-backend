@@ -1,0 +1,25 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="400" cy="400" r="340" stroke="#DD984B" stroke-width="6" opacity="0.3" stroke-dasharray="24 24"/>
+  <circle cx="400" cy="400" r="270" fill="#DD984B" opacity="0.08"/>
+  <!-- Main Shield -->
+  <path d="M400 90 L610 190 V390 C610 550 400 710 400 710 C400 710 190 550 190 390 V190 L400 90 Z" fill="#102A43" stroke="#DD984B" stroke-width="14" stroke-linejoin="round"/>
+  <!-- Inner Shield Accent -->
+  <path d="M400 120 L570 206 V380 C570 510 400 640 400 640 C400 640 230 510 230 380 V206 L400 120 Z" stroke="#DD984B" stroke-width="5" opacity="0.4" fill="none"/>
+  <!-- Lock Mechanism -->
+  <g transform="translate(400, 380)">
+    <path d="M-45 -24 V-60 A45 45 0 0 1 45 -60 V-24" stroke="#FFFFFF" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <rect x="-70" y="-24" width="140" height="120" rx="26" fill="#DD984B"/>
+    <circle cx="0" cy="24" r="14" fill="#102A43"/>
+    <path d="M0 38 v30" stroke="#102A43" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <!-- Security Check Badge Top Right -->
+  <g transform="translate(600, 180)">
+    <circle cx="0" cy="0" r="50" fill="#DD984B"/>
+    <path d="M-16 0 L-4 12 L20 -12" stroke="#102A43" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- Security Check Badge Bottom Left -->
+  <g transform="translate(200, 580)">
+    <circle cx="0" cy="0" r="44" fill="#DD984B"/>
+    <path d="M-14 0 L-4 10 L18 -10" stroke="#102A43" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>

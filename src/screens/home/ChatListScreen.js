@@ -501,12 +501,6 @@ export default function ChatsListScreen({ navigation }) {
               <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.newGroup')}</T>
             </TouchableOpacity>
             <View style={[styles.menuDivider, { backgroundColor: borderColor }]} />
-            <TouchableOpacity style={styles.menuItem} onPress={handleDayMode}>
-              <Icon name={isDark ? 'sunny-outline' : 'moon-outline'} size={20} color={secondaryText} />
-              <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>
-                {isDark ? t('chats.dayMode') : t('chats.nightMode')}
-              </T>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem} onPress={handleSavedMessages}>
               <Icon name="bookmark-outline" size={20} color={secondaryText} />
               <T style={[styles.menuItemText, { color: textColor, marginLeft: 12 }]}>{t('chats.savedMessages')}</T>

@@ -1,0 +1,10 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="56" fill="#DD984B" stroke="#102A43" stroke-width="4"/>
+  <!-- Secure Team Collaboration Chat & Lock Emblem -->
+  <path d="M38 46 c0 -8 7 -14 16 -14 h28 c9 0 16 6 16 14 v16 c0 8 -7 14 -16 14 h-10 l-14 12 v-12 h-4 c-9 0 -16 -6 -16 -14 v-16 z" fill="#102A43"/>
+  <circle cx="50" cy="53" r="4" fill="#FFFFFF"/>
+  <circle cx="60" cy="53" r="4" fill="#FFFFFF"/>
+  <circle cx="70" cy="53" r="4" fill="#FFFFFF"/>
+  <!-- Lock Shield Emblem -->
+  <path d="M74 64 h14 v10 h-14 z M77 64 v-4 a3 3 0 0 1 6 0 v4" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+</svg>

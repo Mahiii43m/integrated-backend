@@ -1,0 +1,9 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="56" fill="#DD984B" stroke="#102A43" stroke-width="4"/>
+  <!-- Space Science & Astronomy (Planet with Orbit Ring & Stars) -->
+  <circle cx="60" cy="60" r="22" fill="#102A43"/>
+  <ellipse cx="60" cy="60" rx="36" ry="12" transform="rotate(-25 60 60)" stroke="#FFFFFF" stroke-width="4" fill="none"/>
+  <circle cx="85" cy="35" r="3" fill="#FFFFFF"/>
+  <circle cx="35" cy="85" r="2.5" fill="#FFFFFF"/>
+  <circle cx="82" cy="78" r="2" fill="#FFFFFF"/>
+</svg>

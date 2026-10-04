@@ -1,0 +1,6 @@
+<svg width="800" height="120" viewBox="0 0 800 120" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Upper Accent Gold Smooth Wave Curve -->
+  <path d="M0,32 C256,72 544,2 800,28 L800,120 L0,120 Z" fill="#DD984B"/>
+  <!-- Lower Navy Main Card Section Curve -->
+  <path d="M0,46 C256,86 544,16 800,42 L800,120 L0,120 Z" fill="#0F2238"/>
+</svg>

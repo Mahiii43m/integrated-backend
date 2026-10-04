@@ -1,0 +1,9 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="56" fill="#102A43" stroke="#DD984B" stroke-width="4"/>
+  <!-- Geospatial & Remote Sensing (Globe & Location Pin) -->
+  <circle cx="60" cy="60" r="28" stroke="#FFFFFF" stroke-width="4" fill="none"/>
+  <path d="M60 32 c10 8 10 48 0 56 c-10 -8 -10 -48 0 -56 z M32 60 h56" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+  <!-- Location Pin -->
+  <path d="M60 42 c-5 0 -9 4 -9 9 c0 7 9 15 9 15 s9 -8 9 -15 c0 -5 -4 -9 -9 -9 z" fill="#DD984B"/>
+  <circle cx="60" cy="51" r="3" fill="#102A43"/>
+</svg>

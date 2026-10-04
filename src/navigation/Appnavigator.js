@@ -23,10 +23,12 @@ import NewGroupScreen from '../screens/chat/NewGroupScreen';
 import AboutScreen from '../screens/settings/AboutScreen';
 import AccountScreen from '../screens/settings/AccountScreen';
 import ThemeScreen from '../screens/settings/ThemeScreen';
+import NotificationSoundScreen from '../screens/settings/NotificationSoundScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
 import NotificationsSettingsScreen from '../screens/settings/NotificationsSettingsScreen';
 import PrivacySecurityScreen from '../screens/settings/PrivacySecurityScreen';
 import HelpFAQScreen from '../screens/settings/HelpFAQScreen';
+import AccentColorScreen from '../screens/settings/AccentColorScreen';
 import ChatSettingsScreen from '../screens/settings/ChatSettingsScreen';
 import BackupStorageScreen from '../screens/settings/BackupStorageScreen';
 import MessageSettingsScreen from '../screens/settings/MessageSettingsScreen';
@@ -118,18 +120,10 @@ export default function AppNavigator() {
         <Stack.Screen name="MessageSettings" component={MessageSettingsScreen} />
         <Stack.Screen name="BackupStorage" component={BackupStorageScreen} />
         <Stack.Screen name="NotificationsSettings" component={NotificationsSettingsScreen} />
-        <Stack.Screen
-          name="NotificationSound"
-          component={BaseScreen}
-          initialParams={{ title: 'Notification Sound' }}
-        />
+        <Stack.Screen name="NotificationSound" component={NotificationSoundScreen} />
         <Stack.Screen name="ThemePicker" component={ThemeScreen} />
         <Stack.Screen name="Language" component={LanguageScreen} />
-        <Stack.Screen
-          name="AccentColor"
-          component={BaseScreen}
-          initialParams={{ title: 'Accent Color' }}
-        />
+        <Stack.Screen name="AccentColor" component={AccentColorScreen} />
         <Stack.Screen name="HelpFAQ" component={HelpFAQScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
       </Stack.Navigator>

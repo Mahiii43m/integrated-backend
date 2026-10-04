@@ -32,7 +32,7 @@ const Icon = ({ name, size = 24, color = '#000' }) => {
 };
 
 const MOCK_DEVICES = [
-  { id: '1', name: 'iPhone 15 Pro', location: 'Addis Ababa, Ethiopia', lastActive: 'Now', isCurrent: true },
+  { id: '1', name: 'Google Pixel 8 Pro', location: 'Addis Ababa, Ethiopia', lastActive: 'Now', isCurrent: true },
   { id: '2', name: 'MacBook Pro', location: 'Addis Ababa, Ethiopia', lastActive: '2 hours ago', isCurrent: false },
   { id: '3', name: 'Chrome (Windows)', location: 'Addis Ababa, Ethiopia', lastActive: 'Yesterday, 4:30 PM', isCurrent: false },
   { id: '4', name: 'Samsung Galaxy S23', location: 'Addis Ababa, Ethiopia', lastActive: '2 days ago', isCurrent: false },
