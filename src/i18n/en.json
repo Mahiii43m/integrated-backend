@@ -263,5 +263,33 @@
     "loading": "Loading...",
     "success": "Success",
     "error": "Error"
+  },
+  "groupInfo": {
+    "title": "Group Info",
+    "contactTitle": "Contact Info",
+    "members": "MEMBERS",
+    "admin": "ADMIN",
+    "you": "(You)",
+    "member": "member",
+    "members_plural": "members",
+    "ssgiStaff": "SSGI Staff",
+    "notSpecified": "Not specified",
+    "notAvailable": "Not available",
+    "department": "Department",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "MESSAGE",
+    "leaveGroup": "Leave Group",
+    "deleteGroup": "Delete Group",
+    "deleteChat": "Delete Chat",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "leave": "Leave",
+    "deleteGroupTitle": "Delete Group",
+    "deleteGroupMessage": "This will permanently delete the group and all its messages for every member. This cannot be undone.",
+    "deleteChatTitle": "Delete Chat",
+    "deleteChatMessage": "This chat will be removed from your list. The other person will still keep their copy.",
+    "leaveGroupTitle": "Leave Group",
+    "leaveGroupMessage": "You will stop receiving messages from this group."
   }
 }

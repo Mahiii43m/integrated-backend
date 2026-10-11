@@ -119,9 +119,7 @@ export default function SettingsScreen({ navigation }) {
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Icon name="chevron-back-outline" size={28} color={textColor} />
-        </TouchableOpacity>
+        <View style={styles.backButton} />
         <T style={[styles.headerTitle, { color: textColor }]}>{t('tabs.settings')}</T>
         <View style={{ width: 40 }} />
       </View>
@@ -138,9 +136,6 @@ export default function SettingsScreen({ navigation }) {
             {user?.email || 'orbiting@chat.com'}
           </T>
         </View>
-        <TouchableOpacity style={styles.editIcon}>
-          <Icon name="pencil-outline" size={20} color={secondaryText} />
-        </TouchableOpacity>
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>

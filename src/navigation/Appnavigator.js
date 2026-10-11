@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,12 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../firebase/context/AuthContext';
 
 import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
+import UserAgreementScreen from '../screens/onboarding/UserAgreementScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import SignUpScreen from '../screens/auth/SignUpScreen';
 import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 import VerifyEmailScreen from '../screens/auth/VerifyEmailScreen';
 import ChatWindowScreen from '../screens/chat/ChatWindowScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
+import ChatDetailsScreen from '../screens/Profile/ChatDetailsScreen';
 import MainTabNavigator from './MainTabNavigator';
 import CallsScreen from '../screens/home/CallsScreen';
 
@@ -36,18 +38,23 @@ import DevicesScreen from '../screens/settings/DevicesScreen';
 
 const Stack = createNativeStackNavigator();
 const ONBOARDING_COMPLETED_KEY = 'has_completed_onboarding';
+const AGREEMENT_ACCEPTED_KEY = 'has_accepted_agreement';
 
 export default function AppNavigator() {
   const { user, loading } = useAuth();
   const [hasOnboarded, setHasOnboarded] = useState(null);
+  const [hasAcceptedAgreement, setHasAcceptedAgreement] = useState(null);
 
   useEffect(() => {
-    AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY).then((value) => {
-      setHasOnboarded(value === 'true');
-    });
+    (async () => {
+      const onboarded = await AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY);
+      const agreed = await AsyncStorage.getItem(AGREEMENT_ACCEPTED_KEY);
+      setHasOnboarded(onboarded === 'true');
+      setHasAcceptedAgreement(agreed === 'true');
+    })();
   }, []);
 
-  if (loading || hasOnboarded === null) {
+  if (loading || hasOnboarded === null || hasAcceptedAgreement === null) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#DD984B" />
@@ -55,7 +62,7 @@ export default function AppNavigator() {
     );
   }
 
-  // STAGE 1: ONBOARDING — shown only if user hasn't completed onboarding
+  // STAGE 1: ONBOARDING
   if (!hasOnboarded) {
     return (
       <NavigationContainer>
@@ -76,7 +83,28 @@ export default function AppNavigator() {
     );
   }
 
-  // STAGE 2: AUTH — user not signed in
+  // STAGE 1.5: USER AGREEMENT
+  if (!hasAcceptedAgreement) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="UserAgreement">
+            {(props) => (
+              <UserAgreementScreen
+                {...props}
+                onAccept={async () => {
+                  await AsyncStorage.setItem(AGREEMENT_ACCEPTED_KEY, 'true');
+                  setHasAcceptedAgreement(true);
+                }}
+              />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  // STAGE 2: AUTH
   if (!user) {
     return (
       <NavigationContainer>
@@ -89,7 +117,7 @@ export default function AppNavigator() {
     );
   }
 
-  // STAGE 3: MAIN APP — signed in
+  // STAGE 3: MAIN APP
   if (!user.emailVerified) {
     return (
       <NavigationContainer>
@@ -107,7 +135,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Calls" component={CallsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ChatWindow" component={ChatWindowScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="ChatDetails" component={ChatDetailsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="NewChat" component={NewChatScreen} />
         <Stack.Screen name="NewGroup" component={NewGroupScreen} />

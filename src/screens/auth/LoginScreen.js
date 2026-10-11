@@ -36,6 +36,9 @@ export default function LoginScreen({ navigation }) {
   const ring2 = useRef(new Animated.Value(0)).current;
   const ring3 = useRef(new Animated.Value(0)).current;
 
+  // 👇 tracks last accepted password value for paste detection
+  const prevPasswordRef = useRef('');
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 700, useNativeDriver: true }),
@@ -72,6 +75,21 @@ export default function LoginScreen({ navigation }) {
       },
     ],
   });
+
+  // 👇 blocks paste / autofill (jump of more than 1 char)
+  const handlePasswordChange = (text) => {
+    const prevLength = prevPasswordRef.current.length;
+    const newLength = text.length;
+
+    if (newLength - prevLength > 1) {
+      // Reject the paste — keep the field at its previous value
+      return;
+    }
+
+    prevPasswordRef.current = text;
+    setError('');
+    setPassword(text);
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !email.includes('@') || !email.includes('.')) {
@@ -169,7 +187,7 @@ export default function LoginScreen({ navigation }) {
                   placeholderTextColor="rgba(0,0,0,0.35)"
                   secureTextEntry={!showPassword}
                   value={password}
-                  onChangeText={(text) => { setError(''); setPassword(text); }}
+                  onChangeText={handlePasswordChange}
                   editable={!loading}
                   selectionColor="#DD984B"
                 />

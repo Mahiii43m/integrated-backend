@@ -72,6 +72,10 @@ export default function SignUpScreen({ navigation }) {
   const [meetsNumbers, setMeetsNumbers] = useState(false);
   const [meetsSpecialChar, setMeetsSpecialChar] = useState(false);
 
+  // 👇 track last accepted values for paste detection
+  const prevPasswordRef = useRef('');
+  const prevConfirmRef = useRef('');
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -88,12 +92,28 @@ export default function SignUpScreen({ navigation }) {
   }, []);
 
   const checkPasswordRequirements = (text) => {
+    // 👇 reject paste / autofill (jump of more than 1 char)
+    if (text.length - prevPasswordRef.current.length > 1) {
+      return;
+    }
+    prevPasswordRef.current = text;
+
     setError('');
     setPassword(text);
     setMeetsLength(text.length >= 12);
     setMeetsUppercase(/[A-Z]/.test(text));
     setMeetsNumbers((text.match(/\d/g) || []).length >= 3);
     setMeetsSpecialChar(/[!@#$%^&*(),.?":{}|<>_\-+=~`[\]\\/;']/.test(text));
+  };
+
+  // 👇 confirm-password handler with its own ref
+  const handleConfirmChange = (text) => {
+    if (text.length - prevConfirmRef.current.length > 1) {
+      return;
+    }
+    prevConfirmRef.current = text;
+    setError('');
+    setConfirmPassword(text);
   };
 
   const handleSignUp = async () => {
@@ -279,10 +299,7 @@ export default function SignUpScreen({ navigation }) {
                     placeholderTextColor="rgba(0,0,0,0.35)"
                     secureTextEntry={!showConfirmPassword}
                     value={confirmPassword}
-                    onChangeText={(text) => {
-                      setError('');
-                      setConfirmPassword(text);
-                    }}
+                    onChangeText={handleConfirmChange}
                     editable={!loading}
                     selectionColor="#0088cc"
                   />

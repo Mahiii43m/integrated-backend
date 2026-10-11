@@ -263,5 +263,33 @@
     "loading": "በመጫን ላይ...",
     "success": "ተሳክቷል",
     "error": "ስህተት"
+  },
+  "groupInfo": {
+    "title": "የቡድን መረጃ",
+    "contactTitle": "የግንኙነት መረጃ",
+    "members": "አባላት",
+    "admin": "አስተዳዳሪ",
+    "you": "(አንተ)",
+    "member": "አባል",
+    "members_plural": "አባላት",
+    "ssgiStaff": "የSSGI ሠራተኛ",
+    "notSpecified": "አልተገለጸም",
+    "notAvailable": "አይገኝም",
+    "department": "ክፍል",
+    "email": "ኢሜይል",
+    "phone": "ስልክ",
+    "message": "መልዕክት",
+    "leaveGroup": "ቡድኑን ልቀቅ",
+    "deleteGroup": "ቡድኑን አጥፋ",
+    "deleteChat": "ውይይቱን አጥፋ",
+    "cancel": "ሰርዝ",
+    "delete": "አጥፋ",
+    "leave": "ልቀቅ",
+    "deleteGroupTitle": "ቡድኑን አጥፋ",
+    "deleteGroupMessage": "ይህ ቡድን እና ሁሉም መልዕክቶቹ ለሁሉም አባላት ለዘላለም ይሰረዛሉ። ይህ እርምጃ መቀልበስ አይቻልም።",
+    "deleteChatTitle": "ውይይቱን አጥፋ",
+    "deleteChatMessage": "ይህ ውይይት ከዝርዝርዎ ይወገዳል። ሌላኛው ሰው የራሱን ቅጂ ይይዛል።",
+    "leaveGroupTitle": "ቡድኑን ልቀቅ",
+    "leaveGroupMessage": "ከዚህ ቡድን መልዕክቶችን መቀበል ያቆማሉ።"
   }
 }

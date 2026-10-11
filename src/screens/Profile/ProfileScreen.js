@@ -14,7 +14,9 @@ import {
   Modal,
   TextInput,
   Platform,
+  Text,
 } from 'react-native';
+
 import Svg, { Path } from 'react-native-svg';
 import { useAuth } from '../../firebase/context/AuthContext';
 import { useTranslation } from '../../i18n';
@@ -176,9 +178,7 @@ export default function ProfileScreen({ navigation }) {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Icon name="chevron-back-outline" size={28} color={textColor} />
-        </TouchableOpacity>
+        <View style={styles.backButton} />
         <T style={[styles.headerTitle, { color: textColor }]}>
           {t('tabs.profile')}
         </T>
@@ -294,7 +294,7 @@ export default function ProfileScreen({ navigation }) {
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => navigation.navigate('MainTabs', { screen: 'Chats' })}>
+            <TouchableOpacity style={styles.optionItem} activeOpacity={0.6} onPress={() => navigation.navigate('MainTabs', { screen: 'Chats' })}>
             <Icon name="people-outline" size={22} color={accentColor} />
             <T style={[styles.optionText, { color: textColor }]}>{t('profile.groupChats')}</T>
             <Icon name="chevron-forward-outline" size={18} color={secondaryText} />

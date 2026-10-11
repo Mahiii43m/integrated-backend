@@ -27,8 +27,11 @@ import T from '../../components/T';
 import Typography from '../../components/Typography';
 import { SPACING, RADIUS } from '../../constants/Typography';
 import { useAuth } from '../../firebase/context/AuthContext';
-import { subscribeToMessages, sendMessage, uploadChatAttachment } from '../../services/messageService';
+import { subscribeToMessages, sendMessage, uploadChatAttachment, sendGeminiMessage } from '../../services/messageService';
 import { useUserProfiles, getDisplayName } from '../../services/userService';
+import { deleteChatForUser, leaveGroup, deleteGroup } from '../../services/chatService';
+import GroupInfoModal from '../../components/GroupInfoModal';
+
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
   let path = '';
@@ -64,7 +67,7 @@ export default function ChatWindowScreen({ route, navigation }) {
   const { t, i18n } = useTranslation();
   const isDark = theme === 'dark';
   const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
-  const { chatId, contactName, contactUid, groupDetails } = route.params || { contactName: 'Contact' };
+  const { chatId, contactName, contactUid, groupDetails, isGemini } = route.params || { contactName: 'Contact' };
   const { user } = useAuth();
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -105,7 +108,9 @@ export default function ChatWindowScreen({ route, navigation }) {
     if (type === 'text') setInputText('');
 
     try {
-      if (attachment) {
+      if (isGemini && type === 'text') {
+        await sendGeminiMessage(user, chatId, textToSend);
+      } else if (attachment) {
         setUploading(true);
         const url = await uploadChatAttachment(chatId, attachment.uri, attachment.name, type);
         await sendMessage(chatId, {
@@ -321,6 +326,37 @@ export default function ChatWindowScreen({ route, navigation }) {
           )}
         </View>
       </KeyboardAvoidingView>
+
+      <GroupInfoModal
+        visible={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+        groupDetails={groupDetails}
+        contactUid={contactUid}
+        contactName={contactName}
+        currentUid={user?.uid}
+        onDelete={async () => {
+          try {
+            if (groupDetails) {
+              await deleteGroup(chatId);
+              console.log('[DELETE] group deleted OK');
+            } else {
+              const res = await deleteChatForUser(chatId, user?.uid);
+              }
+            navigation.goBack();
+          } catch (e) {
+            Alert.alert('Error', 'Failed to delete: ' + (e?.message || e));
+          }
+        }}
+        onLeave={async () => {
+          try {
+            await leaveGroup(chatId, user?.uid);
+            navigation.goBack();
+          } catch (e) {
+            console.error('Leave failed:', e);
+            Alert.alert('Error', 'Failed to leave group.');
+          }
+        }}
+      />
     </SafeAreaView>
   );
 }

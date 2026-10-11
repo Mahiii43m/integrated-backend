@@ -13,6 +13,7 @@ import {
   Image,
   ScrollView,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { useTranslation } from '../../i18n';
@@ -26,6 +27,7 @@ import {
   togglePinChat,
 } from '../../services/chatService';
 import { useUserProfiles, getDisplayName } from '../../services/userService';
+import { getOrCreateGeminiChat } from '../../services/messageService';
 import Logo from '../../assets/images/ssgi-logo.svg';
 
 const Icon = ({ name, size = 24, color = '#000' }) => {
@@ -82,6 +84,7 @@ export default function ChatsListScreen({ navigation }) {
   const [activeTab, setActiveTab] = useState('all');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [openingGemini, setOpeningGemini] = useState(false);
   const searchInputRef = React.useRef(null);
 
   const DEPARTMENT_TABS = [
@@ -363,6 +366,24 @@ export default function ChatsListScreen({ navigation }) {
     return renderChatItem({ item });
   };
 
+  const handleOpenGemini = async () => {
+    if (!user?.uid || openingGemini) return;
+    try {
+      setOpeningGemini(true);
+      const chatId = await getOrCreateGeminiChat(user);
+      navigation.navigate('ChatWindow', {
+        chatId,
+        contactName: 'Gemini AI',
+        isGemini: true,
+      });
+    } catch (error) {
+      console.error('Gemini error:', error);
+      Alert.alert('Gemini AI', error?.message || 'Could not open Gemini chat');
+    } finally {
+      setOpeningGemini(false);
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: bgColor }]}>
       <StatusBar barStyle="light-content" backgroundColor="#0080ce" />
@@ -538,12 +559,42 @@ export default function ChatsListScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+      <TouchableOpacity
+        style={styles.geminiFab}
+        onPress={handleOpenGemini}
+        disabled={openingGemini}
+        activeOpacity={0.85}
+      >
+        {openingGemini ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text style={styles.geminiFabText}>{'\u2726'}</Text>
+        )}
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
+  geminiFab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 110,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#6C4AB6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#6C4AB6',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    zIndex: 9999,
+  },
+  geminiFabText: { color: '#ffffff', fontSize: 28, fontWeight: 'bold' },
   header: {
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 8 : 4,
     paddingHorizontal: 14,

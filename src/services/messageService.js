@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import { db } from '../firebase/firestore';
 import { storage } from '../firebase/storage';
 import { updateLastMessage } from './chatService';
@@ -65,4 +66,68 @@ export async function markMessageRead(chatId, messageId, uid) {
     readBy: firestore.FieldValue.arrayUnion(uid),
     status: 'read',
   });
+}
+
+// -----------------------------------------------------------
+// GEMINI AI — via local bot-server
+// -----------------------------------------------------------
+const GEMINI_SERVER_URL = 'http://10.0.2.2:3000';
+
+/**
+ * Create or fetch the user's Gemini chat. Returns the chatId.
+ */
+export async function getOrCreateGeminiChat(firebaseUser) {
+  if (!firebaseUser) throw new Error('User is not signed in');
+
+  const authUser = auth().currentUser;
+  if (!authUser) throw new Error('Firebase Auth user not found');
+
+  const idToken = await authUser.getIdToken();
+
+  const response = await fetch(`${GEMINI_SERVER_URL}/api/gemini/chat`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to create Gemini chat');
+  }
+
+  return data.chatId;
+}
+
+/**
+ * Send a message to Gemini and get its reply. Server writes to Firestore.
+ */
+export async function sendGeminiMessage(firebaseUser, chatId, text) {
+  if (!firebaseUser?.uid) throw new Error('User is not signed in');
+  if (!chatId) throw new Error('Gemini chat ID is required');
+  if (!text?.trim()) throw new Error('Message cannot be empty');
+
+  const authUser = auth().currentUser;
+  if (!authUser) throw new Error('Firebase Auth user not found');
+
+  const idToken = await authUser.getIdToken();
+
+  const response = await fetch(`${GEMINI_SERVER_URL}/api/gemini/message`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ chatId, text: text.trim() }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to send Gemini message');
+  }
+
+  return data;
 }

@@ -19,9 +19,12 @@ export async function getUserProfile(uid) {
     .doc(uid)
     .get()
     .then((doc) => {
-      const data = doc.exists
-        ? { uid, fullName: doc.data().fullName || null, photoURL: doc.data().photoURL || null }
-        : { uid, fullName: null, photoURL: null };
+      const raw = doc.exists ? doc.data() : null;
+      const data = {
+        uid,
+        fullName: (raw && raw.fullName) || (uid === 'gemini-bot' ? 'Gemini AI' : null),
+        photoURL: (raw && raw.photoURL) || null,
+      };
       profileCache[uid] = data;
       delete inFlightFetches[uid];
       return data;

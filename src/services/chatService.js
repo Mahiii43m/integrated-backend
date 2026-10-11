@@ -106,8 +106,11 @@ export function subscribeToUserChats(uid, callback) {
     .onSnapshot(
       (snap) => {
         if (snap) {
-          console.log('Received chat snapshot, count:', snap.docs.length);
-          callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+          const visible = snap.docs
+            .map((d) => ({ id: d.id, ...d.data() }))
+            .filter((c) => !(c.deletedFor || []).includes(uid));
+          console.log('Received chat snapshot, count:', visible.length);
+          callback(visible);
         } else {
           console.log('Received null snapshot');
         }
@@ -193,4 +196,43 @@ export function subscribeToPinnedChatIds(uid, callback) {
 export async function setChatUrgent(chatId, isUrgent) {
   if (!chatId) return;
   return db.collection('chats').doc(chatId).update({ isUrgent: !!isUrgent });
+}
+
+
+// ─── Delete / Leave ──────────────────────────────────
+// Soft delete: hides the chat for THIS user only (uses `deletedFor` array).
+export async function deleteChatForUser(chatId, uid) {
+  if (!chatId || !uid) return;
+  return db.collection('chats').doc(chatId).update({
+    deletedFor: firestore.FieldValue.arrayUnion(uid),
+  });
+}
+
+// Leave a group: removes the user from participants + admins and hides it.
+export async function leaveGroup(chatId, uid) {
+  if (!chatId || !uid) return;
+  return db.collection('chats').doc(chatId).update({
+    participants: firestore.FieldValue.arrayRemove(uid),
+    admins: firestore.FieldValue.arrayRemove(uid),
+    deletedFor: firestore.FieldValue.arrayUnion(uid),
+  });
+}
+
+// Delete the whole group (admin only). Removes messages subcollection too.
+export async function deleteGroup(chatId) {
+  if (!chatId) return;
+  const chatRef = db.collection('chats').doc(chatId);
+  const messagesSnap = await chatRef.collection('messages').get();
+  const batch = db.batch();
+  messagesSnap.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(chatRef);
+  return batch.commit();
+}
+
+// Restore (in case you later add "undo")
+export async function restoreChatForUser(chatId, uid) {
+  if (!chatId || !uid) return;
+  return db.collection('chats').doc(chatId).update({
+    deletedFor: firestore.FieldValue.arrayRemove(uid),
+  });
 }
