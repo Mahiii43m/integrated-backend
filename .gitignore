@@ -24,3 +24,8 @@ new.sh
 java.nio.file.AccessDeniedException
 type
 package-lock.json.working-backup
+
+android/gradle.properties
+*.jks
+*.apk
+*.aab
