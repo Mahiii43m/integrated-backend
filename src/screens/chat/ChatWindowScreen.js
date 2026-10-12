@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  Keyboard,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Modal,
@@ -18,6 +18,7 @@ import {
   Linking,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { pick, types, isErrorWithCode, errorCodes } from '@react-native-documents/picker';
 import Sound from 'react-native-nitro-sound';
@@ -67,9 +68,11 @@ export default function ChatWindowScreen({ route, navigation }) {
   const { t, i18n } = useTranslation();
   const isDark = theme === 'dark';
   const isAmharic = i18n.language === 'am' || i18n.language?.startsWith('am');
+  const insets = useSafeAreaInsets();
   const { chatId, contactName, contactUid, groupDetails, isGemini } = route.params || { contactName: 'Contact' };
   const { user } = useAuth();
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -94,6 +97,16 @@ export default function ChatWindowScreen({ route, navigation }) {
   const contactUids = contactUid ? [contactUid] : [];
   const contactProfiles = useUserProfiles(contactUids);
   const contactProfile = contactUid ? contactProfiles?.[contactUid] : null;
+
+  
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardOpen(true));
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardOpen(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (!chatId || isDecisionChat) return;
@@ -243,9 +256,9 @@ export default function ChatWindowScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgColor }]}>
+    <SafeAreaView edges={['top']} style={[styles.safeArea, { backgroundColor: bgColor }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
 
         <View style={[styles.header, { backgroundColor: isDark ? '#0f2540' : brandColor }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -288,7 +301,7 @@ export default function ChatWindowScreen({ route, navigation }) {
           </View>
         )}
 
-        <View style={[styles.inputContainer, { backgroundColor: cardColor, borderTopColor: borderColor }]}>
+        <View style={[styles.inputContainer, { backgroundColor: cardColor, borderTopColor: borderColor, paddingBottom: keyboardOpen ? 8 : insets.bottom + 10 }]}>
           {!isRecording ? (
             <>
               <TouchableOpacity onPress={pickImage} style={styles.attachBtn}>

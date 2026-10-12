@@ -101,7 +101,8 @@
     "copy": "Copy",
     "info": "Message Info",
     "readBy": "Read by",
-    "deliveredTo": "Delivered to"
+    "deliveredTo": "Delivered to",
+    "members": "members"
   },
   "settings": {
     "title": "Settings",

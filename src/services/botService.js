@@ -4,7 +4,7 @@
  * Base URL of the Gemini bot server.
  * Android emulator uses 10.0.2.2 to reach localhost of the host machine.
  */
-const BOT_BASE_URL = 'http://10.0.2.2:3000';
+const BOT_BASE_URL = 'http://192.168.137.249:3000';
 
 /**
  * Get the current user's Firebase ID token.

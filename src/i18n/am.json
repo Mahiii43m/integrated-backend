@@ -101,7 +101,8 @@
     "copy": "ቅዳ",
     "info": "የመልዕክት መረጃ",
     "readBy": "ያነበቡት",
-    "deliveredTo": "የደረሰው"
+    "deliveredTo": "የደረሰው",
+    "members": "አባላት"
   },
   "settings": {
     "title": "ቅንብሮች",
